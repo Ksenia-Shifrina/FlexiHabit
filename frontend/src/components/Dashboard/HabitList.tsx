@@ -1,6 +1,6 @@
 import React from "react";
 import { Container, IconButton } from "@mui/material";
-import Habit, { HabitProps } from "./Habit";
+import HabitBox, { HabitProps } from "./HabitBox";
 import AddCircleRoundedIcon from '@mui/icons-material/AddCircleRounded';
 
 const listOfHabits: HabitProps[] = [
@@ -9,19 +9,19 @@ const listOfHabits: HabitProps[] = [
     habitName: 'Read',
     streakCount: 4,
     goalCount: 3,
-    currentCount: 1,
-    minGoal: 'I will read 10 pages 5 times a week.',
-    days: ['Mon', 'Wed', 'Fri'],
-    tags: ['Personal development ', 'Learning']
+    statement: 'read 10 pages',
+    goalDays: [0, 3, 6],
+    completedDays: [1, 3],
+    tags: ['Personal development ']
   },
   {
     id: 2,
-    habitName: 'Gym',
+    habitName: 'Workout',
     streakCount: 3,
-    goalCount: 2,
-    currentCount: 1,
-    minGoal: 'I will workout for 10 minutes 4 times a week.',
-    days: ['Mon', 'Thu', 'Sat'],
+    goalCount: 1,
+    statement: 'workout for 10 minutes',
+    goalDays: [ 1 ],
+    completedDays: [1, 3, 0],
     tags: ['Health']
   }
 ]
@@ -35,15 +35,15 @@ const HabitList: React.FC = () => {
       p: 0
       }}>
       {listOfHabits.map((habit) => (
-        <Habit 
+        <HabitBox 
           key={habit.id}
           id={habit.id} 
           habitName={habit.habitName} 
           streakCount={habit.streakCount}
           goalCount={habit.goalCount}
-          currentCount={habit.currentCount}
-          minGoal={habit.minGoal}
-          days={habit.days}
+          statement={habit.statement}
+          goalDays={habit.goalDays}
+          completedDays={habit.completedDays}
           tags={habit.tags} />
       ))}
       <IconButton sx={{ color: 'addButton.main', fontSize: 'large', p: '0', mt: { xs: 2, sm: 3}}}>

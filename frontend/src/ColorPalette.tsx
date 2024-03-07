@@ -21,11 +21,11 @@ const getDesignTokens = (mode: PaletteMode) => ({
             contrastText: '#F7F3E3',
           },
           icons: {
-            light: '#767676',
+            light: '#929090',
             dark: '#1E1E1E',
           },
           addButton: {
-            main: '#D1CCB8'
+            main: '#dcd7be',
           }
         }
       : {
@@ -45,8 +45,8 @@ const getDesignTokens = (mode: PaletteMode) => ({
             contrastText: '#F7F3E3',
           },
           icons: {
-            light: '#4C4C4C',
-            dark: '#1E1E1E',
+            light: '#616161',
+            dark: '#1E1E1E'
           },
           addButton: {
             main: '#929090'

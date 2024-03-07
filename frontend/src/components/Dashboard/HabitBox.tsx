@@ -8,24 +8,21 @@ import {
   Chip,
   Container,
 } from '@mui/material';
-import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
-import AdjustRoundedIcon from '@mui/icons-material/AdjustRounded';
-import CheckRoundedIcon from '@mui/icons-material/CheckRounded';
-import ClearRoundedIcon from '@mui/icons-material/ClearRounded';
 import BoltIcon from '@mui/icons-material/Bolt';
+import DailyHabitIcons from "./DailyHabitIcons";
 
 export interface HabitProps {
   id: number;
   habitName: string;
   streakCount: number,
   goalCount: number,
-  currentCount: number,
-  minGoal: string,
-  days: string[],
+  statement: string,
+  goalDays: number[],
+  completedDays: number[],
   tags: string[]
 }
 
-const Habit: React.FC<HabitProps> = ({ habitName, currentCount, goalCount, streakCount, minGoal, tags }) => {
+const HabitBox: React.FC<HabitProps> = ({ id, habitName, goalCount, streakCount, statement, tags, goalDays, completedDays }) => {
   return (
     <Box sx={{
       position: 'relative',
@@ -59,7 +56,7 @@ const Habit: React.FC<HabitProps> = ({ habitName, currentCount, goalCount, strea
         m: 3
       }}>
         <Typography variant="body2" sx={{ textAlign: 'left', color: 'secondary.contrastText', fontSize: { xs: '0.8rem', sm: '0.9rem' } }}>
-          {minGoal}
+          {`I will ${statement} ` + `${goalCount}` + `${goalCount > 1 ? " times" : " time"}` + ' a week.'}
         </Typography>
       </Box>
 
@@ -82,8 +79,11 @@ const Habit: React.FC<HabitProps> = ({ habitName, currentCount, goalCount, strea
         <Typography variant="h6" sx={{ textAlign: 'left', fontSize: { xs: '0.9rem', sm: '1.2rem', color: 'primary.contrastText' } }}>
           {habitName}
         </Typography>
-        <Typography variant="body2" sx={{ textAlign: 'left', fontSize: { xs: '0.9rem', sm: '1.2rem', color: 'primary.contrastText' } }}>
-          {`${currentCount}/${goalCount}`}
+        <Typography variant="body2" sx={{ display: {xs: 'none', sm: 'flex'}, textAlign: 'left', fontSize: { sm: '1rem' }, color: 'primary.contrastText' }}>
+          {completedDays.length < goalCount ? `${completedDays.length} out of ${goalCount}` : 'Goal completed!'}
+        </Typography>
+        <Typography variant="body2" sx={{ display: {xs: 'flex', sm: 'none'}, textAlign: 'left', fontSize: { xs: '0.9rem'}, color: 'primary.contrastText' }}>
+          {`${completedDays.length} / ${goalCount}`}
         </Typography>
       </Box>
       <Box sx={{ 
@@ -93,18 +93,7 @@ const Habit: React.FC<HabitProps> = ({ habitName, currentCount, goalCount, strea
         justifyContent: 'space-between',  
         flexGrow: {xs: 0.7, sm: 1, md: 1}
       }}>
-        <Box sx={{ 
-          display: 'flex', 
-          justifyContent: 'space-around', 
-          mb: { xs: 1.5, sm: 3}, 
-          width: '100%'
-        }}> 
-          {Array.from({ length: 7 }, (_, index) => (
-            <IconButton key={index} sx={{ color: 'icons.light', fontSize: 'large', p: '0'}}>
-              <RadioButtonUncheckedIcon sx={{ fontSize: { xs: '1.6rem', sm: '2rem' } }}/>
-            </IconButton>
-          ))}
-        </Box>  
+        <DailyHabitIcons id={id} goalDays={goalDays} completedDays={completedDays} />
         <Chip label={tags[0]} size="small" sx={{ 
           fontSize: { xs: '0.7rem', sm: '0.8rem' }, 
           bgcolor: 'tags.main', 
@@ -115,4 +104,4 @@ const Habit: React.FC<HabitProps> = ({ habitName, currentCount, goalCount, strea
   )
 }
 
-export default Habit;
+export default HabitBox;

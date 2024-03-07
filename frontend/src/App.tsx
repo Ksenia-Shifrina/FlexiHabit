@@ -5,7 +5,7 @@ import Navbar from './Navbar';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { Box, CssBaseline, PaletteMode } from '@mui/material';
 import ColorModeContext from './contexts/ColorModeContext';
-import getDesignTokens from './components/UI/ColorPalette';
+import getDesignTokens from './ColorPalette';
 import Habits from './routes/Habits';
 
 
