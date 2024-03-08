@@ -20,7 +20,7 @@ const listOfHabits: HabitProps[] = [
     streakCount: 3,
     goalCount: 1,
     statement: 'workout for 10 minutes',
-    goalDays: [ 1 ],
+    goalDays: [ 1],
     completedDays: [1, 3, 0],
     tags: ['Health']
   }
