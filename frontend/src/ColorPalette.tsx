@@ -6,7 +6,9 @@ const getDesignTokens = (mode: PaletteMode) => ({
     ...(mode === 'light'
       ? {
           background: {
-            default: '#FCFAF3'
+            default: '#FCFAF3',
+            contrastText: 'black',
+            lightText: '#929090',
           },
           primary: {
             main: '#F7F3E3',
@@ -26,11 +28,13 @@ const getDesignTokens = (mode: PaletteMode) => ({
           },
           addButton: {
             main: '#dcd7be',
-          }
+          },
         }
       : {
           background: {
-            default: '#4C4C4C'
+            default: '#4C4C4C',
+            contrastText: 'F7F3E3',
+            lightText: '#929090',
           },
           primary: {
             main: '#929090',
@@ -46,11 +50,11 @@ const getDesignTokens = (mode: PaletteMode) => ({
           },
           icons: {
             light: '#616161',
-            dark: '#1E1E1E'
+            dark: '#1E1E1E',
           },
           addButton: {
-            main: '#929090'
-          }
+            main: '#929090',
+          },
         }),
   },
 });

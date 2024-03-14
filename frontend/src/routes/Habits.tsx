@@ -1,10 +1,8 @@
-import React from "react";
-import HabitList from "../components/Dashboard/HabitList";
+import React from 'react';
+import HabitList from '../components/Dashboard/Dashboard';
 
 const Habits: React.FC = () => {
-  return (
-    <HabitList />
-  )
-}
+  return <HabitList />;
+};
 
 export default Habits;

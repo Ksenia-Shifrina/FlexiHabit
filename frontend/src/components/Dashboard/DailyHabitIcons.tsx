@@ -1,45 +1,43 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import {
-  Box,
-  IconButton,
-  styled,
-} from '@mui/material';
+import { Box, IconButton, styled } from '@mui/material';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import AdjustRoundedIcon from '@mui/icons-material/AdjustRounded';
 import CheckRoundedIcon from '@mui/icons-material/CheckRounded';
 
 export interface DailyHabitIconsProps {
-  id: number,
-  goalDays: number[],
-  completedDays: number[]
+  id: number;
+  targetDays: number[];
+  completedDays: number[];
+  weekDates: Date[];
 }
 
-const DailyHabitIcons: React.FC<DailyHabitIconsProps> = ({ id, goalDays, completedDays }) => {
+const DailyHabitIcons: React.FC<DailyHabitIconsProps> = ({ id, targetDays, completedDays, weekDates }) => {
   const [checkedIcons, setCheckedIcons] = useState(completedDays);
-  const [goalIcons, setGoalIcons] = useState(goalDays);
+  const [targetIcons, setTargetIcons] = useState(targetDays);
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
   const [dragOrigin, setDragOrigin] = useState<number | null>(null);
+  const today = new Date();
 
   const getDayStartingMonday = () => {
     const date = new Date();
     let day = date.getDay();
     day = day === 0 ? 6 : day - 1;
     return day;
-  }
+  };
 
   const currentDayOfWeek = getDayStartingMonday();
 
   const handleCheckedIcon = (index: number) => {
-    setCheckedIcons(prev => prev.filter(item => item !== index))
-  }
+    setCheckedIcons((prev) => prev.filter((item) => item !== index));
+  };
 
   const handleGoalIcon = (index: number) => {
-    setCheckedIcons(prev => [...prev, index]);
-  }
+    setCheckedIcons((prev) => [...prev, index]);
+  };
 
   const handleSimpleIcon = (index: number) => {
-    setCheckedIcons(prev => [...prev, index]);
-  }
+    setCheckedIcons((prev) => [...prev, index]);
+  };
 
   const handleDragStart = (event: React.DragEvent<HTMLButtonElement>, index: number) => {
     setDraggedIndex(index);
@@ -52,8 +50,8 @@ const DailyHabitIcons: React.FC<DailyHabitIconsProps> = ({ id, goalDays, complet
       return;
     }
     if (draggedIndex !== null) {
-      setGoalIcons((prev) => {
-        const filteredIcons = prev.filter(item => item !== draggedIndex);
+      setTargetIcons((prev) => {
+        const filteredIcons = prev.filter((item) => item !== draggedIndex);
         filteredIcons.splice(0, 0, targetIndex);
         return filteredIcons;
       });
@@ -66,70 +64,81 @@ const DailyHabitIcons: React.FC<DailyHabitIconsProps> = ({ id, goalDays, complet
     setDragOrigin(null);
     setDraggedIndex(null);
   };
-  
+
   return (
-    <Box sx={{ 
-      display: 'flex', 
-      justifyContent: 'space-around', 
-      mb: { xs: 1.5, sm: 3}, 
-      width: '100%'
-    }}> 
-      {Array.from({ length: 7 }).map((_, index) => {
-        if (index > currentDayOfWeek && goalIcons.includes(index)) {
+    <Box
+      sx={{
+        display: 'flex',
+        justifyContent: 'center',
+        flexGrow: 1,
+      }}
+    >
+      {weekDates.map((_, index) => {
+        if (weekDates?.[index] && weekDates[index].getTime() > today.getTime() && targetIcons.includes(index)) {
           return (
-          <IconButton 
-            key={index}
-            draggable={true} 
-            onDragStart={(event) => handleDragStart(event, index)}
-            onDragEnd={handleDragEnd}
-            onDragOver={(event) => event.preventDefault()}
-            sx={{ color: 'icons.light', fontSize: 'large', p: '0'}}>
-            <AdjustRoundedIcon sx={{ fontSize: { xs: '1.6rem', sm: '2rem' } }} />
-          </IconButton>)
-        } else if (index > currentDayOfWeek) {
-          return (
-          <IconButton 
-            key={index} 
-            onDrop={(event) => handleDrop(event, index)}
-            onDragOver={(event) => event.preventDefault()}
-            sx={{ color: 'icons.light', fontSize: 'large', p: '0'}}>
-            <RadioButtonUncheckedIcon sx={{ fontSize: { xs: '1.6rem', sm: '2rem' } }} />
-          </IconButton>)
-        } else if (checkedIcons.includes(index)) {
-          return (
-            <IconButton 
-              key={index} 
-              onClick={() => handleCheckedIcon(index)} 
-              onDragOver={(event) => event.preventDefault()}
-              sx={{ color: 'icons.dark', fontSize: 'large', p: '0'}}>
-              <CheckRoundedIcon sx={{ fontSize: { xs: '1.6rem', sm: '2rem' } }} />
-            </IconButton>)
-        } else if (goalIcons.includes(index)) {
-          return (
-            <IconButton 
-              key={index} 
-              onClick={() => handleGoalIcon(index)} 
-              draggable={true} 
+            <IconButton
+              key={index}
+              draggable={true}
               onDragStart={(event) => handleDragStart(event, index)}
               onDragEnd={handleDragEnd}
               onDragOver={(event) => event.preventDefault()}
-              sx={{ color: 'icons.dark', fontSize: 'large', p: '0'}}>
-              <AdjustRoundedIcon sx={{ fontSize: { xs: '1.6rem', sm: '2rem' } }} />
-            </IconButton>)
-        } else {
+              sx={{ color: 'icons.light', fontSize: 'large', p: '0', mx: 'auto' }}
+            >
+              <AdjustRoundedIcon sx={{ fontSize: { xs: '1rem', sm: '2rem' } }} />
+            </IconButton>
+          );
+        } else if (weekDates?.[index] && weekDates[index].getTime() > today.getTime()) {
           return (
-            <IconButton 
-              key={index} 
-              onClick={() => handleSimpleIcon(index)} 
+            <IconButton
+              key={index}
               onDrop={(event) => handleDrop(event, index)}
               onDragOver={(event) => event.preventDefault()}
-              sx={{ color: 'icons.dark', fontSize: 'large', p: '0'}}>
-              <RadioButtonUncheckedIcon sx={{ fontSize: { xs: '1.6rem', sm: '2rem' } }} />
-            </IconButton>)
+              sx={{ color: 'icons.light', fontSize: 'large', p: '0', mx: 'auto' }}
+            >
+              <RadioButtonUncheckedIcon sx={{ fontSize: { xs: '1rem', sm: '2rem' } }} />
+            </IconButton>
+          );
+        } else if (checkedIcons.includes(index)) {
+          return (
+            <IconButton
+              key={index}
+              onClick={() => handleCheckedIcon(index)}
+              onDragOver={(event) => event.preventDefault()}
+              sx={{ color: 'icons.dark', fontSize: 'large', p: '0', mx: 'auto' }}
+            >
+              <CheckRoundedIcon sx={{ fontSize: { xs: '1rem', sm: '2rem' } }} />
+            </IconButton>
+          );
+        } else if (targetIcons.includes(index)) {
+          return (
+            <IconButton
+              key={index}
+              onClick={() => handleGoalIcon(index)}
+              draggable={true}
+              onDragStart={(event) => handleDragStart(event, index)}
+              onDragEnd={handleDragEnd}
+              onDragOver={(event) => event.preventDefault()}
+              sx={{ color: 'icons.dark', fontSize: 'large', p: '0', mx: 'auto' }}
+            >
+              <AdjustRoundedIcon sx={{ fontSize: { xs: '1rem', sm: '2rem' } }} />
+            </IconButton>
+          );
+        } else {
+          return (
+            <IconButton
+              key={index}
+              onClick={() => handleSimpleIcon(index)}
+              onDrop={(event) => handleDrop(event, index)}
+              onDragOver={(event) => event.preventDefault()}
+              sx={{ color: 'icons.dark', fontSize: 'large', p: '0', mx: 'auto' }}
+            >
+              <RadioButtonUncheckedIcon sx={{ fontSize: { xs: '1rem', sm: '2rem' } }} />
+            </IconButton>
+          );
         }
       })}
-    </Box>  
-  )
-}
+    </Box>
+  );
+};
 
 export default DailyHabitIcons;
