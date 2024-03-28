@@ -3,7 +3,7 @@ import { Box, IconButton, Typography } from '@mui/material';
 import ChevronLeftRoundedIcon from '@mui/icons-material/ChevronLeftRounded';
 import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded';
 
-// const daysOfWeek: string[] = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+const daysOfWeekFull: string[] = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 const daysOfWeek: string[] = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'];
 const months: string[] = [
   'January',
@@ -22,12 +22,11 @@ const months: string[] = [
 
 export interface CalendarProps {
   weekDates: Date[];
-  displayMondayDate: Date;
   displayMonthIndex: number;
   getNewWeekDates: Function;
 }
 
-const Calendar: React.FC<CalendarProps> = ({ weekDates, getNewWeekDates, displayMondayDate, displayMonthIndex }) => {
+const Calendar: React.FC<CalendarProps> = ({ weekDates, getNewWeekDates, displayMonthIndex }) => {
   const today = new Date();
 
   const handlePrevWeek = () => {
@@ -66,13 +65,14 @@ const Calendar: React.FC<CalendarProps> = ({ weekDates, getNewWeekDates, display
           display: 'flex',
           flexBasis: { xs: '19%', sm: '21%' },
           flexShrink: 0,
+          justifyContent: 'center',
           ml: -0.5,
         }}
       >
         <Typography
           sx={{
             fontSize: { xs: '0.9rem', sm: '1.1rem' },
-            ml: { xs: 0, sm: 3 },
+            ml: { xs: 0, sm: 0 },
           }}
         >
           {months[displayMonthIndex]}
@@ -98,8 +98,9 @@ const Calendar: React.FC<CalendarProps> = ({ weekDates, getNewWeekDates, display
             flexDirection: 'row',
           }}
         >
-          {daysOfWeek.map((day, index) => (
+          {weekDates.map((date, index) => (
             <Box
+              key={index}
               sx={{
                 display: 'flex',
                 justifyContent: 'center',
@@ -109,31 +110,38 @@ const Calendar: React.FC<CalendarProps> = ({ weekDates, getNewWeekDates, display
             >
               <Typography
                 sx={{
+                  display: { xs: 'none', sm: 'flex' },
                   fontSize: { xs: '0.9rem', sm: '1.1rem' },
                   textAlign: 'center',
                   mx: 'auto',
-                  fontWeight: weekDates?.[index] && isSameCalendarDay(weekDates[index], today) ? 'bold' : 'normal',
-                  color:
-                    weekDates?.[index] && weekDates[index].getTime() > today.getTime()
-                      ? 'background.lightText'
-                      : 'background.contrastText',
+                  fontWeight: isSameCalendarDay(date, today) ? 'bold' : 'normal',
+                  color: date.getTime() > today.getTime() ? 'background.lightText' : 'background.contrastText',
                 }}
               >
-                {day}
+                {daysOfWeekFull[index]}
+              </Typography>
+              <Typography
+                sx={{
+                  display: { xs: 'flex', sm: 'none' },
+                  fontSize: { xs: '0.9rem', sm: '1.1rem' },
+                  textAlign: 'center',
+                  mx: 'auto',
+                  fontWeight: isSameCalendarDay(date, today) ? 'bold' : 'normal',
+                  color: date.getTime() > today.getTime() ? 'background.lightText' : 'background.contrastText',
+                }}
+              >
+                {daysOfWeek[index]}
               </Typography>
               <Typography
                 sx={{
                   fontSize: { xs: '0.9rem', sm: '1.1rem' },
                   textAlign: 'center',
                   mx: 'auto',
-                  fontWeight: weekDates?.[index] && isSameCalendarDay(weekDates[index], today) ? 'bold' : 'normal',
-                  color:
-                    weekDates?.[index] && weekDates[index].getTime() > today.getTime()
-                      ? 'background.lightText'
-                      : 'background.contrastText',
+                  fontWeight: isSameCalendarDay(date, today) ? 'bold' : 'normal',
+                  color: date.getTime() > today.getTime() ? 'background.lightText' : 'background.contrastText',
                 }}
               >
-                {weekDates?.[index] && weekDates[index].getDate()}
+                {date.getDate()}
               </Typography>
             </Box>
           ))}

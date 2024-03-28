@@ -1,31 +1,69 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Box, Typography, IconButton, Badge, Tooltip, Chip, Container } from '@mui/material';
 import BoltIcon from '@mui/icons-material/Bolt';
+import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import DailyHabitIcons from './DailyHabitIcons';
+import ColorModeContext from '../../contexts/ColorModeContext';
+import { darkenColor } from '../../helpers/darkenColor';
 
 export interface HabitProps {
   habit: {
-    id: number;
+    id: string;
     habitName: string;
-    streakCount: number;
     statement: string;
-    targetDays: number[];
-    completedDays: number[];
-    tag: string[];
+    tag: string;
+    targetDaysDefault: number[];
+    targetDays: Date[];
+    completedDays: Date[];
+    streak: number;
+    color: string;
   };
   weekDates: Date[];
-  displayMondayDate: Date;
+  markDayAsCompleted: Function;
+  unmarkDayAsCompleted: Function;
+  updateTargetDays: Function;
 }
 
-const HabitBox: React.FC<HabitProps> = ({ habit, weekDates, displayMondayDate }) => {
+const HabitBox: React.FC<HabitProps> = ({
+  habit,
+  updateTargetDays,
+  unmarkDayAsCompleted,
+  markDayAsCompleted,
+  weekDates,
+}) => {
   const id = habit.id;
   const habitName = habit.habitName;
-  const streakCount = habit.streakCount;
+  const streak = habit.streak;
   const statement = habit.statement;
+  const targetDaysDefault = habit.targetDaysDefault;
   const targetDays = habit.targetDays;
   const completedDays = habit.completedDays;
   const tag = habit.tag;
-  const targetDaysCount = targetDays.length;
+  const targetDaysDefaultCount = targetDaysDefault.length;
+
+  let habitColor = habit.color;
+  const { mode } = useContext(ColorModeContext);
+  if (mode === 'dark') {
+    habitColor = darkenColor(habitColor, 10);
+  }
+
+  const today = new Date();
+
+  const completionRatio = (completedDays.length / targetDays.length) * 100;
+
+  const beforeStyle =
+    completionRatio < 100 && completionRatio > 0
+      ? {
+          content: '""',
+          position: 'absolute',
+          left: `${completionRatio}%`,
+          top: 0,
+          width: '6%',
+          height: '100%',
+          backgroundColor: habitColor,
+          borderRadius: '0% 0% 100% 0%',
+        }
+      : {};
 
   return (
     <Box
@@ -57,7 +95,7 @@ const HabitBox: React.FC<HabitProps> = ({ habit, weekDates, displayMondayDate })
           zIndex: -1,
           display: 'flex',
           alignItems: 'flex-start',
-          justifyContent: 'flex-start',
+          justifyContent: 'space-between',
           pl: { xs: 1.5, sm: 3 },
           pt: { xs: 1, sm: 1.5 },
           m: 3,
@@ -67,13 +105,44 @@ const HabitBox: React.FC<HabitProps> = ({ habit, weekDates, displayMondayDate })
           variant="body2"
           sx={{ textAlign: 'left', color: 'secondary.contrastText', fontSize: { xs: '0.8rem', sm: '0.9rem' } }}
         >
-          {targetDaysCount === 7 && `I will ${statement} every day.`}
-          {targetDaysCount === 1 && `I will ${statement} 1 time a week.`}
-          {targetDaysCount > 1 && targetDaysCount < 7 && `I will ${statement} ${targetDaysCount} times a week.`}
+          {targetDaysDefaultCount === 7 && `I will ${statement} every day.`}
+          {targetDaysDefaultCount === 1 && `I will ${statement} 1 time a week.`}
+          {targetDaysDefaultCount > 1 &&
+            targetDaysDefaultCount < 7 &&
+            `I will ${statement} ${targetDaysDefaultCount} times a week.`}
         </Typography>
+        <IconButton
+          sx={{
+            color: 'icons.light',
+            mr: 1.5,
+            p: 0,
+          }}
+        >
+          <EditRoundedIcon
+            sx={{
+              fontSize: { xs: '0.7rem', sm: '1rem' },
+            }}
+          />
+        </IconButton>
       </Box>
       <Box
         sx={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          height: '100%',
+          width: '100%',
+          borderRadius: 'inherit',
+          backgroundImage: `linear-gradient(to right, ${habitColor} ${completionRatio}%, transparent ${completionRatio}%)`,
+          transition: 'background-size 2s ease-in-out',
+          backgroundSize: 'cover',
+          backgroundRepeat: 'no-repeat',
+          '::before': beforeStyle,
+        }}
+      />
+      <Box
+        sx={{
+          position: 'relative',
           display: 'flex',
           flexDirection: 'column',
           width: '100%',
@@ -98,19 +167,26 @@ const HabitBox: React.FC<HabitProps> = ({ habit, weekDates, displayMondayDate })
               ml: -0.5,
             }}
           >
-            <BoltIcon
-              sx={{ color: 'inherit', fontSize: { xs: '1.4rem', sm: '1.7rem', color: 'primary.contrastText' } }}
-            />
-            <Typography variant="body1" sx={{ fontSize: { xs: '1rem', sm: '1.2rem', color: 'primary.contrastText' } }}>
-              {streakCount}
+            <BoltIcon sx={{ fontSize: { xs: '1.4rem', sm: '1.7rem' }, color: 'primary.contrastText' }} />
+            <Typography variant="body1" sx={{ fontSize: { xs: '1rem', sm: '1.2rem' }, color: 'primary.contrastText' }}>
+              {streak ? streak : 0}
             </Typography>
           </Box>
-          <DailyHabitIcons id={id} targetDays={targetDays} completedDays={completedDays} weekDates={weekDates} />
+          <DailyHabitIcons
+            id={id}
+            targetDays={targetDays}
+            targetDaysDefault={targetDaysDefault}
+            completedDays={completedDays}
+            weekDates={weekDates}
+            markDayAsCompleted={markDayAsCompleted}
+            unmarkDayAsCompleted={unmarkDayAsCompleted}
+            updateTargetDays={updateTargetDays}
+          />
         </Box>
 
         <Typography
           variant="h6"
-          sx={{ textAlign: 'left', fontSize: { xs: '1rem', sm: '1.2rem', color: 'primary.contrastText' } }}
+          sx={{ textAlign: 'left', fontSize: { xs: '1rem', sm: '1.2rem' }, color: 'primary.contrastText' }}
         >
           {habitName}
         </Typography>
@@ -127,12 +203,14 @@ const HabitBox: React.FC<HabitProps> = ({ habit, weekDates, displayMondayDate })
             variant="body2"
             sx={{ textAlign: 'left', fontSize: { sm: '1rem' }, color: 'primary.contrastText' }}
           >
-            {completedDays.length < targetDaysCount
-              ? `${completedDays.length} out of ${targetDaysCount}`
-              : 'Goal reached!'}
+            {completedDays.length < targetDays.length
+              ? `${completedDays.length} out of ${targetDays.length}`
+              : targetDays.length === 0
+                ? `0 out of ${targetDaysDefaultCount}`
+                : 'Goal reached!'}
           </Typography>
           <Chip
-            label={tag[0]}
+            label={tag}
             size="small"
             sx={{
               height: { xs: '1.5em', sm: '1.8em' },

@@ -1,7 +1,14 @@
-import React, { createContext, useContext } from 'react';
+import React from 'react';
+import { PaletteMode } from '@mui/material';
 
-const ColorModeContext = createContext({ toggleColorMode: () => {} });
+interface IColorModeContext {
+  toggleColorMode: () => void;
+  mode: PaletteMode;
+}
 
-// export const useColorMode = () => useContext(ColorModeContext);
+const ColorModeContext = React.createContext<IColorModeContext>({
+  toggleColorMode: () => {},
+  mode: 'light', // default value
+});
 
 export default ColorModeContext;
