@@ -6,7 +6,8 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { Box, CssBaseline, PaletteMode } from '@mui/material';
 import ColorModeContext from './contexts/ColorModeContext';
 import getDesignTokens from './ColorPalette';
-import Habits from './routes/Habits';
+import DashboardRoute from './routes/Dashboard';
+import NewHabitFormRoute from './routes/NewHabitForm';
 
 const App: React.FC = () => {
   const [mode, setMode] = useState<PaletteMode>('light');
@@ -32,7 +33,8 @@ const App: React.FC = () => {
         <Box className="App">
           <Navbar />
           <Routes>
-            <Route path="/flexihabit/dashboard" element={<Habits />} />
+            <Route path="/flexihabit/dashboard" element={<DashboardRoute />} />
+            <Route path="/flexihabit/newhabit" element={<NewHabitFormRoute />} />
           </Routes>
         </Box>
       </ThemeProvider>

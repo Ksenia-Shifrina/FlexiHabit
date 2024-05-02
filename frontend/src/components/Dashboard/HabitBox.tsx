@@ -133,7 +133,7 @@ const HabitBox: React.FC<HabitProps> = ({
           height: '100%',
           width: '100%',
           borderRadius: 'inherit',
-          backgroundImage: `linear-gradient(to right, ${habitColor} ${completionRatio}%, transparent ${completionRatio}%)`,
+          backgroundImage: `linear-gradient(to right, ${habitColor} ${completionRatio}%, transparent ${completionRatio + 1}%)`,
           transition: 'background-size 2s ease-in-out',
           backgroundSize: 'cover',
           backgroundRepeat: 'no-repeat',

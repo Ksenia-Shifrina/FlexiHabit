@@ -3,6 +3,7 @@ import { Box, Container, IconButton, Typography } from '@mui/material';
 import HabitBox, { HabitProps } from './HabitBox';
 import AddCircleRoundedIcon from '@mui/icons-material/AddCircleRounded';
 import Calendar from './Calendar';
+import { useNavigate } from 'react-router-dom';
 
 interface Habit {
   id: string;
@@ -22,7 +23,7 @@ interface HabitDays {
   completedDays: Date[];
 }
 
-const HabitList: React.FC = () => {
+const Dashboard: React.FC = () => {
   const today = new Date();
   const [fetchedHabits, setFetchedHabits] = useState<Habit[]>([]);
   const [weekDates, setWeekDates] = useState<Date[]>([]);
@@ -213,8 +214,14 @@ const HabitList: React.FC = () => {
     }
   };
 
+  const navigate = useNavigate();
+
+  const openNewHabitForm = () => {
+    navigate('/flexihabit/newhabit');
+  };
+
   return (
-    <Container
+    <Box
       sx={{
         display: 'flex',
         flexDirection: 'column',
@@ -256,10 +263,10 @@ const HabitList: React.FC = () => {
           mt: { xs: 2, sm: 3 },
         }}
       >
-        <AddCircleRoundedIcon sx={{ fontSize: { xs: '2.3rem', sm: '2.7rem' } }} />
+        <AddCircleRoundedIcon onClick={openNewHabitForm} sx={{ fontSize: { xs: '2.3rem', sm: '2.7rem' } }} />
       </IconButton>
-    </Container>
+    </Box>
   );
 };
 
-export default HabitList;
+export default Dashboard;
