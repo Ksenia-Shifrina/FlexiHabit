@@ -64,7 +64,3 @@ export function darkenColor(hexColor: string, darkenAmount: number): string {
 
   return `#${rgbToHex(r)}${rgbToHex(g)}${rgbToHex(b)}`;
 }
-
-// Usage
-const darkerBlue = darkenColor('#9BB1FF', 20); // Darken the light blue by 20%
-const darkerOrange = darkenColor('#FF8B57', 20); // Darken the light orange by 20%

@@ -1,12 +1,12 @@
 import React, { useContext } from 'react';
-import { Box, Typography, IconButton, Badge, Tooltip, Chip, Container } from '@mui/material';
+import { Box, Typography, IconButton, Chip } from '@mui/material';
 import BoltIcon from '@mui/icons-material/Bolt';
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import DailyHabitIcons from './DailyHabitIcons';
 import ColorModeContext from '../../contexts/ColorModeContext';
 import { darkenColor } from '../../helpers/darkenColor';
 
-export interface HabitProps {
+export interface HabitBoxProps {
   habit: {
     id: string;
     habitName: string;
@@ -19,18 +19,10 @@ export interface HabitProps {
     color: string;
   };
   weekDates: Date[];
-  markDayAsCompleted: Function;
-  unmarkDayAsCompleted: Function;
-  updateTargetDays: Function;
+  setFetchedHabits: Function;
 }
 
-const HabitBox: React.FC<HabitProps> = ({
-  habit,
-  updateTargetDays,
-  unmarkDayAsCompleted,
-  markDayAsCompleted,
-  weekDates,
-}) => {
+const HabitBox: React.FC<HabitBoxProps> = ({ habit, weekDates, setFetchedHabits }) => {
   const id = habit.id;
   const habitName = habit.habitName;
   const streak = habit.streak;
@@ -46,8 +38,6 @@ const HabitBox: React.FC<HabitProps> = ({
   if (mode === 'dark') {
     habitColor = darkenColor(habitColor, 10);
   }
-
-  const today = new Date();
 
   const completionRatio = (completedDays.length / targetDays.length) * 100;
 
@@ -178,9 +168,7 @@ const HabitBox: React.FC<HabitProps> = ({
             targetDaysDefault={targetDaysDefault}
             completedDays={completedDays}
             weekDates={weekDates}
-            markDayAsCompleted={markDayAsCompleted}
-            unmarkDayAsCompleted={unmarkDayAsCompleted}
-            updateTargetDays={updateTargetDays}
+            setFetchedHabits={setFetchedHabits}
           />
         </Box>
 

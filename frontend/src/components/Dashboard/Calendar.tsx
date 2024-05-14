@@ -1,49 +1,68 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Box, IconButton, Typography } from '@mui/material';
 import ChevronLeftRoundedIcon from '@mui/icons-material/ChevronLeftRounded';
 import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded';
-
-const daysOfWeekFull: string[] = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-const daysOfWeek: string[] = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'];
-const months: string[] = [
-  'January',
-  'February',
-  'March',
-  'April',
-  'May',
-  'June',
-  'July',
-  'August',
-  'September',
-  'October',
-  'November',
-  'December',
-];
+import {
+  daysOfWeekShort,
+  daysOfWeekLong,
+  isSameCalendarDay,
+  months,
+  calculateNewWeekDates,
+} from '../../utils/dateUtils';
+import { useFetchNewWeekHabits } from '../../hooks/habitApiHooks';
+import { Habit } from '../../types/habitTypes';
 
 export interface CalendarProps {
   weekDates: Date[];
+  setWeekDates: Function;
   displayMonthIndex: number;
-  getNewWeekDates: Function;
+  setDisplayMonthIndex: Function;
+  setFetchedHabits: Function;
 }
 
-const Calendar: React.FC<CalendarProps> = ({ weekDates, getNewWeekDates, displayMonthIndex }) => {
+const Calendar: React.FC<CalendarProps> = ({
+  weekDates,
+  setWeekDates,
+  displayMonthIndex,
+  setDisplayMonthIndex,
+  setFetchedHabits,
+}) => {
   const today = new Date();
 
-  const handlePrevWeek = () => {
-    getNewWeekDates(-7);
+  const {
+    habits: newWeekHabits,
+    error: newWeekError,
+    loading: newWeekLoading,
+    fetchNewWeekHabits: fetchNewWeekHabits,
+  } = useFetchNewWeekHabits();
+
+  const getNewWeek = async (offset: number) => {
+    const { newWeekDates, newMonthIndex } = calculateNewWeekDates(offset, weekDates[0]);
+    setDisplayMonthIndex(newMonthIndex);
+    setWeekDates(newWeekDates);
+    fetchNewWeekHabits(newWeekDates[0], newWeekDates[6]);
   };
 
-  const handleNextWeek = () => {
-    getNewWeekDates(7);
-  };
-
-  const isSameCalendarDay = (date1: Date, date2: Date): boolean => {
-    return (
-      date1.getDate() === date2.getDate() &&
-      date1.getMonth() === date2.getMonth() &&
-      date1.getFullYear() === date2.getFullYear()
-    );
-  };
+  React.useEffect(() => {
+    if (newWeekHabits) {
+      setFetchedHabits((prevHabits: Habit[]) =>
+        prevHabits.map((habit) => {
+          const updatedHabit = newWeekHabits.find((h: Habit) => h.id === habit.id);
+          return updatedHabit
+            ? {
+                ...habit,
+                targetDays: updatedHabit.targetDays,
+                completedDays: updatedHabit.completedDays,
+              }
+            : {
+                ...habit,
+                targetDays: [],
+                completedDays: [],
+              };
+        })
+      );
+    }
+  }, [newWeekHabits]);
 
   return (
     <Box
@@ -86,7 +105,7 @@ const Calendar: React.FC<CalendarProps> = ({ weekDates, getNewWeekDates, display
           flexDirection: 'row',
         }}
       >
-        <IconButton onClick={handlePrevWeek} sx={{ color: 'primary.contrastText', fontSize: 'large', p: '0' }}>
+        <IconButton onClick={() => getNewWeek(-7)} sx={{ color: 'primary.contrastText', fontSize: 'large', p: '0' }}>
           <ChevronLeftRoundedIcon sx={{ fontSize: { xs: '1.2rem', sm: '1.4rem' } }} />
         </IconButton>
 
@@ -118,7 +137,7 @@ const Calendar: React.FC<CalendarProps> = ({ weekDates, getNewWeekDates, display
                   color: date.getTime() > today.getTime() ? 'background.lightText' : 'background.contrastText',
                 }}
               >
-                {daysOfWeekFull[index]}
+                {daysOfWeekLong[index]}
               </Typography>
               <Typography
                 sx={{
@@ -130,7 +149,7 @@ const Calendar: React.FC<CalendarProps> = ({ weekDates, getNewWeekDates, display
                   color: date.getTime() > today.getTime() ? 'background.lightText' : 'background.contrastText',
                 }}
               >
-                {daysOfWeek[index]}
+                {daysOfWeekShort[index]}
               </Typography>
               <Typography
                 sx={{
@@ -147,7 +166,7 @@ const Calendar: React.FC<CalendarProps> = ({ weekDates, getNewWeekDates, display
           ))}
         </Box>
 
-        <IconButton onClick={handleNextWeek} sx={{ color: 'primary.contrastText', fontSize: 'large', p: '0' }}>
+        <IconButton onClick={() => getNewWeek(7)} sx={{ color: 'primary.contrastText', fontSize: 'large', p: '0' }}>
           <ChevronRightRoundedIcon sx={{ fontSize: { xs: '1.2rem', sm: '1.4rem' } }} />
         </IconButton>
       </Box>

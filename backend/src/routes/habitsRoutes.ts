@@ -15,7 +15,7 @@ habitsRouter.route('/:habitId/mark-uncompleted').patch(asyncHandler(habits.unmar
 
 habitsRouter.route('/:habitId/target-dates').patch(asyncHandler(habits.updateTargetDays));
 
-habitsRouter.route('/add-habit').post(asyncHandler(habits.addNewHabit));
+habitsRouter.route('/create-habit').post(asyncHandler(habits.createHabit));
 
 habitsRouter
   .route('/:habitId/edit')

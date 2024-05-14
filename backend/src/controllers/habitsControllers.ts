@@ -181,7 +181,9 @@ const updateTargetDays = async (
   }
 };
 
-const addNewHabit = async (req: Request, res: Response) => {};
+const createHabit = async (req: Request, res: Response) => {
+  console.log('hello from backend');
+};
 
 const updateHabitDetails = async (req: Request, res: Response) => {};
 
@@ -193,7 +195,7 @@ export default {
   updateTargetDays,
   markDayAsCompleted,
   unmarkDayAsCompleted,
-  addNewHabit,
+  createHabit,
   updateHabitDetails,
   deleteHabit,
 };

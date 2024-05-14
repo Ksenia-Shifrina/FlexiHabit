@@ -16,13 +16,14 @@ import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
 import { useTheme } from '@mui/material/styles';
 import ColorModeContext from './contexts/ColorModeContext';
-
-const pages = ['Habits', 'Progress'];
+import { useNavigate } from 'react-router-dom';
 
 const Navbar: React.FC = () => {
+  const navigate = useNavigate();
+
   const theme = useTheme();
   const colorMode = useContext(ColorModeContext);
-  
+
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -33,9 +34,18 @@ const Navbar: React.FC = () => {
     setAnchorElNav(null);
   };
 
+  const openDashboard = () => {
+    navigate('/flexihabit/dashboard');
+  };
+
+  const openDashboardAndCloseMenu = () => {
+    navigate('/flexihabit/dashboard');
+    setAnchorElNav(null);
+  };
+
   return (
     <AppBar position="static" color="secondary" enableColorOnDark>
-      <Container maxWidth="xl" >
+      <Container maxWidth="xl">
         <Toolbar disableGutters>
           {/* <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} /> */}
           <Typography
@@ -57,15 +67,10 @@ const Navbar: React.FC = () => {
             FlexiHabit
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-            {pages.map((page) => (
-              <Button
-                key={page}
-                onClick={handleCloseNavMenu}
-                sx={{ my: 2, color: 'inherit', display: 'block' }}
-              >
-                {page}
-              </Button>
-            ))}
+            <Button onClick={openDashboard} sx={{ my: 2, color: 'inherit', display: 'block' }}>
+              Habits
+            </Button>
+            <Button sx={{ my: 2, color: 'inherit', display: 'block' }}>Progress</Button>
           </Box>
 
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
@@ -76,7 +81,7 @@ const Navbar: React.FC = () => {
               aria-haspopup="true"
               onClick={handleOpenNavMenu}
               color="inherit"
-              sx={{ pl: { xs: 0 , sm: 2}}}
+              sx={{ pl: { xs: 0, sm: 2 } }}
             >
               <MenuIcon />
             </IconButton>
@@ -98,11 +103,12 @@ const Navbar: React.FC = () => {
                 display: { xs: 'block', md: 'none' },
               }}
             >
-              {pages.map((page) => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
-                  <Typography textAlign="center">{page}</Typography>
-                </MenuItem>
-              ))}
+              <MenuItem onClick={openDashboardAndCloseMenu}>
+                <Typography textAlign="center">Habits</Typography>
+              </MenuItem>
+              <MenuItem onClick={handleCloseNavMenu}>
+                <Typography textAlign="center">Progress</Typography>
+              </MenuItem>
             </Menu>
           </Box>
           {/* <AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} /> */}
@@ -128,12 +134,12 @@ const Navbar: React.FC = () => {
 
           <Box sx={{ flexGrow: 0 }}>
             <IconButton sx={{ m: 0 }} onClick={colorMode.toggleColorMode} color="inherit">
-            {theme.palette.mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
-          </IconButton>
+              {theme.palette.mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
+            </IconButton>
           </Box>
         </Toolbar>
       </Container>
     </AppBar>
   );
-}
+};
 export default Navbar;

@@ -1,8 +1,27 @@
-import React, { useState, useMemo, useEffect } from 'react';
-import { Box, IconButton, styled } from '@mui/material';
-import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
-import AdjustRoundedIcon from '@mui/icons-material/AdjustRounded';
-import CheckRoundedIcon from '@mui/icons-material/CheckRounded';
+import React, { useState } from 'react';
+import { Box } from '@mui/material';
+import {
+  useFetchHabits,
+  useMarkDayAsCompleted,
+  useUnmarkDayAsCompleted,
+  useUpdateTargetDays,
+} from '../../hooks/habitApiHooks';
+import { containsDate } from '../../utils/dateUtils';
+import DisabledEmptyIcon from './DailyHabitIcons/DisabledEmptyIcon';
+import FutureDefaultTargetIcon from './DailyHabitIcons/FutureDefaultTargetIcon';
+import DisabledTargetIcon from './DailyHabitIcons/DisabledTargetIcon';
+import DisabledCheckedIcon from './DailyHabitIcons/DisabledCheckedIcon';
+import ActiveCheckedIcon from './DailyHabitIcons/ActiveCheckedIcon';
+import ActiveTargetIcon from './DailyHabitIcons/ActiveTargetIcon';
+import ActiveEmptyIcon from './DailyHabitIcons/ActiveEmptyIcon';
+import {
+  isCurrentChecked,
+  isCurrentTarget,
+  isFutureDefaultTarget,
+  isPastChecked,
+  isPastOrFutureTarget,
+  isPastOrFutureUnchecked,
+} from '../../helpers/dailyHabitIconsConditions';
 
 export interface DailyHabitIconsProps {
   id: string;
@@ -10,9 +29,7 @@ export interface DailyHabitIconsProps {
   targetDaysDefault: number[];
   completedDays: Date[];
   weekDates: Date[];
-  markDayAsCompleted: Function;
-  unmarkDayAsCompleted: Function;
-  updateTargetDays: Function;
+  setFetchedHabits: Function;
 }
 
 const DailyHabitIcons: React.FC<DailyHabitIconsProps> = ({
@@ -21,30 +38,41 @@ const DailyHabitIcons: React.FC<DailyHabitIconsProps> = ({
   targetDaysDefault,
   completedDays,
   weekDates,
-  markDayAsCompleted,
-  unmarkDayAsCompleted,
-  updateTargetDays,
+  setFetchedHabits,
 }) => {
-  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
-  const [dragOrigin, setDragOrigin] = useState<string | null>(null);
   const today = new Date();
   const oneWeekFromToday = new Date();
   oneWeekFromToday.setDate(today.getDate() - 7);
 
-  const handleTickedIcon = (dateToDelete: Date) => {
-    unmarkDayAsCompleted(dateToDelete, id);
-  };
+  const [dragOrigin, setDragOrigin] = useState<string | null>(null);
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
 
-  const handleUntickedIcon = (dateToAdd: Date) => {
-    markDayAsCompleted(dateToAdd, id);
-  };
+  const { habits: Habits, error: Error, loading: Loading, fetchHabits: fetchHabits } = useFetchHabits();
+  const { data: markDayData, markDayAsCompleted: markDayAsCompleted } = useMarkDayAsCompleted();
+  const { data: unmarkDayData, unmarkDayAsCompleted: unmarkDayAsCompleted } = useUnmarkDayAsCompleted();
+  const { data: updateTargetData, updateTargetDays: updateTargetDays } = useUpdateTargetDays();
+
+  React.useEffect(() => {
+    fetchHabits(weekDates[0], weekDates[6]);
+  }, [markDayData, unmarkDayData, updateTargetData]);
+
+  React.useEffect(() => {
+    if (Habits) {
+      setFetchedHabits(Habits);
+    }
+  }, [Habits]);
 
   const handleDragStart = (index: number) => {
-    setDraggedIndex(index);
     setDragOrigin(id);
+    setDraggedIndex(index);
   };
 
-  const handleDrop = (event: React.DragEvent<HTMLButtonElement>, dateToAdd: Date) => {
+  const handleDragEnd = () => {
+    setDragOrigin(null);
+    setDraggedIndex(null);
+  };
+
+  const handleDrop = async (event: React.DragEvent<HTMLButtonElement>, dateToAdd: Date) => {
     event.preventDefault();
     if (dragOrigin !== id) {
       return;
@@ -58,23 +86,6 @@ const DailyHabitIcons: React.FC<DailyHabitIconsProps> = ({
     setDraggedIndex(null);
   };
 
-  const handleDragEnd = () => {
-    setDragOrigin(null);
-    setDraggedIndex(null);
-  };
-
-  const containsDate = (dates: Date[], dateToCheck: Date): boolean => {
-    return dates.some((date) => {
-      const parsedDate = new Date(date);
-      const parsedDateToCheck = new Date(dateToCheck);
-      return (
-        parsedDate.getFullYear() === parsedDateToCheck.getFullYear() &&
-        parsedDate.getMonth() === parsedDateToCheck.getMonth() &&
-        parsedDate.getDate() === parsedDateToCheck.getDate()
-      );
-    });
-  };
-
   return (
     <Box
       sx={{
@@ -84,97 +95,44 @@ const DailyHabitIcons: React.FC<DailyHabitIconsProps> = ({
       }}
     >
       {weekDates.map((date, index) => {
-        if (date.getTime() < oneWeekFromToday.getTime() && containsDate(completedDays, date)) {
+        if (isPastChecked(date, completedDays)) {
+          return <DisabledCheckedIcon index={index} date={date} handleDrop={handleDrop} />;
+        } else if (isFutureDefaultTarget(index, weekDates, targetDaysDefault)) {
+          return <FutureDefaultTargetIcon index={index} />;
+        } else if (isPastOrFutureTarget(date, targetDays)) {
+          return <DisabledTargetIcon index={index} handleDragStart={handleDragStart} handleDragEnd={handleDragEnd} />;
+        } else if (isPastOrFutureUnchecked(date)) {
+          return <DisabledEmptyIcon index={index} date={date} handleDrop={handleDrop} />;
+        } else if (isCurrentChecked(date, completedDays)) {
           return (
-            <IconButton
-              key={index}
-              onDrop={(event) => handleDrop(event, date)}
-              onDragOver={(event) => event.preventDefault()}
-              sx={{ color: 'icons.light', fontSize: 'large', p: '0', mx: 'auto' }}
-            >
-              <CheckRoundedIcon sx={{ fontSize: { xs: '1rem', sm: '2rem' } }} />
-            </IconButton>
+            <ActiveCheckedIcon
+              index={index}
+              date={date}
+              id={id}
+              handleDrop={handleDrop}
+              unmarkDayAsCompleted={unmarkDayAsCompleted}
+            />
           );
-        } else if (weekDates[0].getTime() > today.getTime() && targetDaysDefault.includes(index)) {
+        } else if (isCurrentTarget(date, targetDays)) {
           return (
-            <IconButton key={index} sx={{ color: 'icons.light', fontSize: 'large', p: '0', mx: 'auto' }}>
-              <AdjustRoundedIcon sx={{ fontSize: { xs: '1rem', sm: '2rem' } }} />
-            </IconButton>
-          );
-        } else if (date.getTime() > today.getTime() && containsDate(targetDays, date)) {
-          return (
-            <IconButton
-              key={index}
-              draggable={true}
-              onDragStart={() => handleDragStart(index)}
-              onDragEnd={handleDragEnd}
-              onDragOver={(event) => event.preventDefault()}
-              sx={{ color: 'icons.light', fontSize: 'large', p: '0', mx: 'auto' }}
-            >
-              <AdjustRoundedIcon sx={{ fontSize: { xs: '1rem', sm: '2rem' } }} />
-            </IconButton>
-          );
-        } else if (date.getTime() < oneWeekFromToday.getTime() && containsDate(targetDays, date)) {
-          return (
-            <IconButton
-              key={index}
-              draggable={true}
-              onDragStart={() => handleDragStart(index)}
-              onDragEnd={handleDragEnd}
-              onDragOver={(event) => event.preventDefault()}
-              sx={{ color: 'icons.light', fontSize: 'large', p: '0', mx: 'auto' }}
-            >
-              <AdjustRoundedIcon sx={{ fontSize: { xs: '1rem', sm: '2rem' } }} />
-            </IconButton>
-          );
-        } else if (date.getTime() > today.getTime() || date.getTime() < oneWeekFromToday.getTime()) {
-          return (
-            <IconButton
-              key={index}
-              onDrop={(event) => handleDrop(event, date)}
-              onDragOver={(event) => event.preventDefault()}
-              sx={{ color: 'icons.light', fontSize: 'large', p: '0', mx: 'auto' }}
-            >
-              <RadioButtonUncheckedIcon sx={{ fontSize: { xs: '1rem', sm: '2rem' } }} />
-            </IconButton>
-          );
-        } else if (containsDate(completedDays, date)) {
-          return (
-            <IconButton
-              key={index}
-              onClick={() => handleTickedIcon(date)}
-              onDrop={(event) => handleDrop(event, date)}
-              onDragOver={(event) => event.preventDefault()}
-              sx={{ color: 'icons.dark', fontSize: 'large', p: '0', mx: 'auto' }}
-            >
-              <CheckRoundedIcon sx={{ fontSize: { xs: '1rem', sm: '2rem' } }} />
-            </IconButton>
-          );
-        } else if (containsDate(targetDays, date)) {
-          return (
-            <IconButton
-              key={index}
-              onClick={() => handleUntickedIcon(date)}
-              draggable={true}
-              onDragStart={() => handleDragStart(index)}
-              onDragEnd={handleDragEnd}
-              onDragOver={(event) => event.preventDefault()}
-              sx={{ color: 'icons.dark', fontSize: 'large', p: '0', mx: 'auto' }}
-            >
-              <AdjustRoundedIcon sx={{ fontSize: { xs: '1rem', sm: '2rem' } }} />
-            </IconButton>
+            <ActiveTargetIcon
+              index={index}
+              date={date}
+              id={id}
+              handleDragEnd={handleDragEnd}
+              handleDragStart={handleDragStart}
+              markDayAsCompleted={markDayAsCompleted}
+            />
           );
         } else {
           return (
-            <IconButton
-              key={index}
-              onClick={() => handleUntickedIcon(date)}
-              onDrop={(event) => handleDrop(event, date)}
-              onDragOver={(event) => event.preventDefault()}
-              sx={{ color: 'icons.dark', fontSize: 'large', p: '0', mx: 'auto' }}
-            >
-              <RadioButtonUncheckedIcon sx={{ fontSize: { xs: '1rem', sm: '2rem' } }} />
-            </IconButton>
+            <ActiveEmptyIcon
+              index={index}
+              date={date}
+              id={id}
+              handleDrop={handleDrop}
+              markDayAsCompleted={markDayAsCompleted}
+            />
           );
         }
       })}
