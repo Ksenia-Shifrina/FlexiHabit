@@ -12,15 +12,30 @@ const ThirdPageInputForm: React.FC<PagesNewHabitFormProps> = ({ displayNewPage, 
 
   return (
     <Box sx={{}}>
-      <FormControl fullWidth>
+      <Typography variant="h1" sx={{ fontSize: '2rem', mb: '2rem' }}>
+        To keep balance
+      </Typography>
+      <Typography variant="h1" sx={{ fontSize: '2rem', mb: '2rem' }}>
+        I take care of various
+      </Typography>
+      <Typography variant="h1" sx={{ fontSize: '2rem', mb: '2rem' }}>
+        areas of my life.
+      </Typography>
+      <Typography variant="h1" sx={{ fontSize: '2rem', mb: '2rem' }}>
+        This habit will help with my
+      </Typography>
+      <FormControl sx={{ minWidth: 250 }} variant="standard">
         <Select id="habitTag" name="habitTag" value={inputValues.tagValue} onChange={handleTagInput}>
-          {validTags.map((tag) => (
-            <MenuItem value={tag}>{tag}</MenuItem>
+          {validTags.map((tag, index) => (
+            <MenuItem key={index} value={tag}>
+              {tag}
+            </MenuItem>
           ))}
         </Select>
       </FormControl>
       <IconButton onClick={() => displayNewPage(-1)} sx={{ color: 'primary.contrastText', fontSize: 'large', p: '0' }}>
         <ChevronLeftRoundedIcon sx={{ fontSize: { xs: '1.2rem', sm: '1.4rem' } }} />
+        Back
       </IconButton>
       <IconButton type="submit" sx={{ color: 'primary.contrastText', fontSize: 'large', p: '0' }}>
         Save

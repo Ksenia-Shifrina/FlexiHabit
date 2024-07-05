@@ -1,9 +1,13 @@
 import { useCallback } from 'react';
 import { useApi } from './useAPI';
-import { Habit } from '../types/habitTypes';
+import { EditHabitData, Habit } from '../types/habitTypes';
 
 interface HabitsApiResponse {
   habits: Habit[];
+}
+
+interface HabitApiResponse {
+  habit: EditHabitData;
 }
 
 interface UpdateResponse {
@@ -103,17 +107,17 @@ export const useUpdateTargetDays = () => {
 };
 
 export const useCreateNewHabit = () => {
-  const { data, error, loading, request } = useApi<HabitsApiResponse>();
+  const { data, error, loading, request } = useApi<UpdateResponse>();
   const createHabit = useCallback(
-    (habitName: string, habitColor: string, habitActivity: string, habitTargetDays: number[], habitTag: string) => {
+    (habitName: string, habitColor: string, habitStatement: string, targetDaysDefault: number[], habitTag: string) => {
       request({
         endpoint: 'create-habit',
         method: 'POST',
         body: {
           habitName,
           habitColor,
-          habitActivity,
-          habitTargetDays,
+          habitStatement,
+          targetDaysDefault,
           habitTag,
         },
       });
@@ -123,34 +127,61 @@ export const useCreateNewHabit = () => {
   return { data, error, loading, createHabit };
 };
 
-// export const tryCreateNewHabit = async (
-//   habitName: string,
-//   habitColor: string,
-//   habitActivity: string,
-//   habitTargetDays: number[],
-//   habitTag: string
-// ) => {
-//   const url = 'http://localhost:3001/flexihabit/create-habit';
-//   try {
-//     console.log('request received');
-//     const response = await fetch(url, {
-//       method: 'POST',
-//       headers: {
-//         'Content-Type': 'application/json',
-//       },
-//       body: JSON.stringify({
-//         habitName,
-//         habitColor,
-//         habitActivity,
-//         habitTargetDays,
-//         habitTag,
-//       }),
-//     });
-//     if (!response.ok) {
-//       throw new Error('Network response was not ok');
-//     }
-//     await response.json();
-//   } catch (error) {
-//     console.error('Error creating habit:', error);
-//   }
-// };
+export const useFetchHabitDetails = () => {
+  const { data, error, loading, request } = useApi<HabitApiResponse>();
+  const fetchHabitDetails = useCallback(
+    (habitId: string) => {
+      request({
+        endpoint: ':habitId/edit',
+        method: 'GET',
+        pathParams: { habitId },
+      });
+    },
+    [request]
+  );
+  return { habit: data?.habit, error, loading, fetchHabitDetails };
+};
+
+export const useUpdateHabitDetails = () => {
+  const { data, error, loading, request } = useApi<UpdateResponse>();
+  const updateHabitDetails = useCallback(
+    (
+      habitId: string,
+      habitName: string,
+      habitColor: string,
+      habitStatement: string,
+      targetDaysDefault: number[],
+      habitTag: string
+    ) => {
+      request({
+        endpoint: ':habitId/edit',
+        method: 'PUT',
+        pathParams: { habitId },
+        body: {
+          habitName,
+          habitColor,
+          habitStatement,
+          targetDaysDefault,
+          habitTag,
+        },
+      });
+    },
+    [request]
+  );
+  return { data, error, loading, updateHabitDetails };
+};
+
+export const useDeleteHabit = () => {
+  const { data, error, loading, request } = useApi<UpdateResponse>();
+  const deleteHabit = useCallback(
+    (habitId: string) => {
+      request({
+        endpoint: ':habitId/edit',
+        method: 'DELETE',
+        pathParams: { habitId },
+      });
+    },
+    [request]
+  );
+  return { data, error, loading, deleteHabit };
+};

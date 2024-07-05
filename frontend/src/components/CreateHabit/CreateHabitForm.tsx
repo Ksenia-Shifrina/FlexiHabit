@@ -8,8 +8,9 @@ import HighlightOffRoundedIcon from '@mui/icons-material/HighlightOffRounded';
 import { useCreateNewHabit } from '../../hooks/habitApiHooks';
 import { InputValuesFormat } from '../../types/inputTypes';
 import { startingInputValues } from '../../helpers/inputHelpers';
+import { getTrueKeys } from '../../helpers/convertTypes';
 
-const NewHabitForm: React.FC = ({}) => {
+const CreateHabitForm: React.FC = ({}) => {
   const navigate = useNavigate();
   const [displayedPage, setDisplayedPage] = useState<number>(1);
   const [inputValues, setInputValues] = useState<InputValuesFormat>(startingInputValues);
@@ -25,17 +26,20 @@ const NewHabitForm: React.FC = ({}) => {
     const formData = new FormData(event.currentTarget);
     const habitName = formData.get('habitName');
     const habitColor = formData.get('habitColor');
-    const habitActivity = formData.get('habitActivity');
-    const habitTargetDays = formData.get('habitTargetDays');
+    const habitStatement = formData.get('habitStatement');
     const habitTag = formData.get('habitTag');
+    const habitTargetDays = inputValues.targetDaysValue;
+    let targetDaysDefault: number[] = [];
+    if (habitTargetDays) {
+      targetDaysDefault = getTrueKeys(habitTargetDays);
+    }
     if (
       typeof habitName === 'string' &&
       typeof habitColor === 'string' &&
-      typeof habitActivity === 'string' &&
-      Array.isArray(habitTargetDays) &&
+      typeof habitStatement === 'string' &&
       typeof habitTag === 'string'
     ) {
-      createHabit(habitName, habitColor, habitActivity, habitTargetDays, habitTag);
+      createHabit(habitName, habitColor, habitStatement, targetDaysDefault, habitTag);
     } else {
       console.error('Form data type error');
     }
@@ -63,33 +67,57 @@ const NewHabitForm: React.FC = ({}) => {
           borderRadius: '10px',
           boxShadow: 1,
           width: { xs: '90%', sm: '80%' },
-          height: { xs: '35rem', sm: '40rem' },
+          height: { xs: 'auto', sm: 'auto' },
           maxWidth: '2000px',
           // maxHeight: { xs: '95px', sm: '120px' },
           mt: { xs: '2rem', sm: '4rem' },
         }}
       >
-        <IconButton
-          onClick={() => navigate('/flexihabit/dashboard')}
-          sx={{ color: 'primary.contrastText', fontSize: 'large', p: '0' }}
+        <Box
+          sx={{
+            display: 'flex',
+            width: '100%',
+            flexDirection: 'row',
+            justifyContent: 'flex-end',
+          }}
         >
-          <HighlightOffRoundedIcon sx={{ fontSize: { xs: '1.2rem', sm: '1.4rem' } }} />
-        </IconButton>
-        <div style={{ display: displayedPage === 1 ? 'block' : 'none' }}>
+          <IconButton
+            onClick={() => navigate('/flexihabit/dashboard')}
+            sx={{ color: 'primary.contrastText', fontSize: 'large', p: '0', mr: 7 }}
+          >
+            <HighlightOffRoundedIcon sx={{ fontSize: { xs: '1.2rem', sm: '1.4rem' } }} />
+          </IconButton>
+        </Box>
+        <div
+          style={{
+            visibility: displayedPage === 1 ? 'visible' : 'hidden',
+            position: displayedPage === 1 ? 'static' : 'absolute',
+          }}
+        >
           <FirstPageInputForm
             displayNewPage={displayNewPage}
             inputValues={inputValues}
             setInputValues={setInputValues}
           />
         </div>
-        <div style={{ display: displayedPage === 2 ? 'block' : 'none' }}>
+        <div
+          style={{
+            visibility: displayedPage === 2 ? 'visible' : 'hidden',
+            position: displayedPage === 2 ? 'static' : 'absolute',
+          }}
+        >
           <SecondPageInputForm
             displayNewPage={displayNewPage}
             inputValues={inputValues}
             setInputValues={setInputValues}
           />
         </div>
-        <div style={{ display: displayedPage === 3 ? 'block' : 'none' }}>
+        <div
+          style={{
+            visibility: displayedPage === 3 ? 'visible' : 'hidden',
+            position: displayedPage === 3 ? 'static' : 'absolute',
+          }}
+        >
           <ThirdPageInputForm
             displayNewPage={displayNewPage}
             inputValues={inputValues}
@@ -101,4 +129,4 @@ const NewHabitForm: React.FC = ({}) => {
   );
 };
 
-export default NewHabitForm;
+export default CreateHabitForm;

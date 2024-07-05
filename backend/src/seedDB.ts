@@ -4,15 +4,11 @@ import { HabitModel } from './models/habitModel';
 const seeds = [
   {
     habitName: 'Daily Reading',
-    statement: 'read 10 pages',
-    tag: 'Self-development',
-    color: '#FF8B57',
+    habitStatement: 'read 10 pages',
+    habitTag: 'Personal development',
+    habitColor: '#FF8B57',
     targetDaysDefault: [1, 2, 4, 5],
-    days: [
-      { date: new Date('2024-03-01'), target: true, completed: false },
-      { date: new Date('2024-03-03'), target: true, completed: true },
-      { date: new Date('2024-03-05'), target: false, completed: true },
-      { date: new Date('2024-03-07'), target: true, completed: true },
+    habitDays: [
       { date: new Date('2024-03-09'), target: false, completed: true },
       { date: new Date('2024-03-11'), target: true, completed: false },
       { date: new Date('2024-03-13'), target: false, completed: true },
@@ -34,19 +30,19 @@ const seeds = [
       { date: new Date('2024-05-08'), target: true, completed: false },
       { date: new Date('2024-05-10'), target: true, completed: false },
       { date: new Date('2024-05-11'), target: true, completed: false },
+      { date: new Date('2024-05-14'), target: true, completed: false },
+      { date: new Date('2024-05-15'), target: true, completed: true },
+      { date: new Date('2024-05-18'), target: true, completed: false },
+      { date: new Date('2024-05-19'), target: true, completed: false },
     ],
   },
   {
     habitName: 'Morning Jogging',
-    statement: 'jog for 15 minutes',
-    tag: 'Health',
+    habitStatement: 'jog for 15 minutes',
+    habitTag: 'Physical health',
     targetDaysDefault: [1, 3, 5],
-    color: '#9BB1FF',
-    days: [
-      { date: new Date('2024-03-02'), target: true, completed: true },
-      { date: new Date('2024-03-04'), target: false, completed: true },
-      { date: new Date('2024-03-06'), target: true, completed: false },
-      { date: new Date('2024-03-08'), target: false, completed: true },
+    habitColor: '#9BB1FF',
+    habitDays: [
       { date: new Date('2024-03-10'), target: true, completed: true },
       { date: new Date('2024-03-12'), target: true, completed: false },
       { date: new Date('2024-03-14'), target: true, completed: true },
@@ -66,6 +62,9 @@ const seeds = [
       { date: new Date('2024-05-07'), target: true, completed: true },
       { date: new Date('2024-05-09'), target: true, completed: false },
       { date: new Date('2024-05-12'), target: true, completed: false },
+      { date: new Date('2024-05-13'), target: true, completed: true },
+      { date: new Date('2024-05-16'), target: true, completed: false },
+      { date: new Date('2024-05-19'), target: true, completed: false },
     ],
   },
 ];

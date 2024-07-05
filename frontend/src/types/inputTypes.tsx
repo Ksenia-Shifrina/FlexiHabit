@@ -1,21 +1,14 @@
-export type Tag =
-  | 'Career'
-  | 'Learning'
-  | 'Physical health'
-  | 'Creativity'
-  | 'Social life'
-  | 'Family'
-  | 'Romance'
-  | 'Friendship'
-  | 'Personal development'
-  | 'Spirituality'
-  | 'Mental health';
+import { Tag } from '../../../shared/types/tagType';
+
+export type TargetDay = {
+  [key: number]: boolean;
+};
 
 export interface InputValuesFormat {
   nameValue: string;
   colorValue: string;
-  activityValue: string;
+  statementValue: string;
   frequencyValue: number;
-  targetDaysValue: number[];
+  targetDaysValue: TargetDay;
   tagValue: Tag;
 }

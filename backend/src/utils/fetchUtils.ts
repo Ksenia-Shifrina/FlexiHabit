@@ -1,6 +1,6 @@
 import { HabitModel } from '../models/habitModel';
-import { adjustDateForTimezone } from '../utils/dateUtils';
-import { Day, HabitBasicData, IHabit } from '../interfaces/habitInterfaces';
+import { adjustDateForTimezone, calculateWeekDatesStartMonday } from '../utils/dateUtils';
+import { HabitDay, HabitBasicData, IHabit, HabitEditData } from '../interfaces/habitInterfaces';
 
 export const getHabitsWeeklyData = async (startDate: string | undefined, endDate: string | undefined) => {
   try {
@@ -11,11 +11,11 @@ export const getHabitsWeeklyData = async (startDate: string | undefined, endDate
       parsedEndDate.setUTCHours(23, 59, 59, 999);
       const habits = await HabitModel.aggregate([
         {
-          $unwind: '$days',
+          $unwind: '$habitDays',
         },
         {
           $match: {
-            'days.date': {
+            'habitDays.date': {
               $gte: parsedStartDate,
               $lte: parsedEndDate,
             },
@@ -24,17 +24,17 @@ export const getHabitsWeeklyData = async (startDate: string | undefined, endDate
         {
           $group: {
             _id: '$_id',
-            days: { $push: '$days' },
+            habitDays: { $push: '$habitDays' },
             habitName: { $first: '$habitName' },
-            statement: { $first: '$statement' },
-            tag: { $first: '$tag' },
+            habitStatement: { $first: '$habitStatement' },
+            habitTag: { $first: '$habitTag' },
             targetDaysDefault: { $first: '$targetDaysDefault' },
           },
         },
       ]);
       const habitsWeeklyData = habits.map((habit) => {
-        const completedDays = habit.days.filter((day: Day) => day.completed).map((day: Day) => day.date);
-        const targetDays = habit.days.filter((day: Day) => day.target).map((day: Day) => day.date);
+        const completedDays = habit.habitDays.filter((day: HabitDay) => day.completed).map((day: HabitDay) => day.date);
+        const targetDays = habit.habitDays.filter((day: HabitDay) => day.target).map((day: HabitDay) => day.date);
         return {
           id: habit._id,
           completedDays,
@@ -55,42 +55,58 @@ export const getHabitsDataWithStreak = async () => {
     const habits: IHabit[] = await HabitModel.find({});
     const streakBreakDays = await HabitModel.aggregate([
       {
-        $unwind: '$days',
+        $unwind: '$habitDays',
       },
       {
         $match: {
-          'days.target': true,
-          'days.completed': false,
-          'days.date': { $lte: today },
+          'habitDays.target': true,
+          'habitDays.completed': false,
+          'habitDays.date': { $lte: today },
         },
       },
       {
         $group: {
           _id: '$_id',
-          streakBreakDay: { $max: '$days.date' },
+          streakBreakDay: { $max: '$habitDays.date' },
         },
       },
     ]);
-    const habitStreakBreakDaysMap = new Map<string, Date>();
-    streakBreakDays.forEach((streakBreakDay: { _id: string; streakBreakDay: Date }) => {
-      habitStreakBreakDaysMap.set(streakBreakDay._id.toString(), streakBreakDay.streakBreakDay);
+
+    const habitStreakBreakDaysMap = new Map<string, { streakBreakDay: Date | null; noStreakBreaks: boolean }>();
+    streakBreakDays.forEach((habitData: { _id: string; streakBreakDay: Date }) => {
+      habitStreakBreakDaysMap.set(habitData._id.toString(), {
+        streakBreakDay: habitData.streakBreakDay,
+        noStreakBreaks: false,
+      });
     });
+
+    habits.forEach((habit) => {
+      if (!habitStreakBreakDaysMap.has(habit._id.toString())) {
+        habitStreakBreakDaysMap.set(habit._id.toString(), { streakBreakDay: null, noStreakBreaks: true });
+      }
+    });
+
     const habitsBasicData: HabitBasicData[] = [];
     habits.forEach((habit: IHabit) => {
-      const streakBreakDay = habitStreakBreakDaysMap.get(habit._id.toString());
-      const completedDates = habit.days.filter((day) => day.completed).map((day) => day.date);
+      const habitData = habitStreakBreakDaysMap.get(habit._id.toString());
+      const completedDates = habit.habitDays.filter((day) => day.completed).map((day) => day.date);
       let streak = 0;
-      if (streakBreakDay) {
-        const validDates = completedDates.filter((date) => date > streakBreakDay);
-        streak = validDates.length;
+      if (habitData) {
+        const { streakBreakDay, noStreakBreaks } = habitData;
+        if (streakBreakDay !== null) {
+          const validDates = completedDates.filter((date) => date > streakBreakDay);
+          streak = validDates.length;
+        } else if (noStreakBreaks === true) {
+          streak = completedDates.length;
+        }
       }
       habitsBasicData.push({
         id: habit._id,
-        streak: streak,
+        streakCount: streak,
         habitName: habit.habitName,
-        statement: habit.statement,
-        tag: habit.tag,
-        color: habit.color,
+        habitColor: habit.habitColor,
+        habitStatement: habit.habitStatement,
+        habitTag: habit.habitTag,
         targetDaysDefault: habit.targetDaysDefault,
       });
     });
@@ -98,4 +114,20 @@ export const getHabitsDataWithStreak = async () => {
   } catch (error) {
     console.error(error);
   }
+};
+
+export const createInitialTargetDays = (targetDaysArray: number[]): HabitDay[] => {
+  const currentWeekDates = calculateWeekDatesStartMonday();
+  const initialTargetDays: HabitDay[] = targetDaysArray.map((dayIndex) => {
+    if (dayIndex >= 0 && dayIndex < currentWeekDates.length) {
+      return {
+        date: adjustDateForTimezone(currentWeekDates[dayIndex]),
+        target: true,
+        completed: false,
+      };
+    } else {
+      throw new Error('Day index is out of range of the dates provided');
+    }
+  });
+  return initialTargetDays;
 };

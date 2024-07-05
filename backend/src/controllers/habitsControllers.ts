@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { HabitModel } from '../models/habitModel';
-import { Day } from '../interfaces/habitInterfaces';
-import { getHabitsDataWithStreak, getHabitsWeeklyData } from '../utils/fetchUtils';
+import { HabitDay, HabitEditData, ManageHabitRequest } from '../interfaces/habitInterfaces';
+import { createInitialTargetDays, getHabitsDataWithStreak, getHabitsWeeklyData } from '../utils/fetchUtils';
 import { adjustDateForTimezone } from '../utils/dateUtils';
 
 const sendHabitDashboardData = async (req: Request, res: Response) => {
@@ -32,10 +32,10 @@ const sendHabitDashboardData = async (req: Request, res: Response) => {
       return {
         id: habit.id,
         habitName: habit.habitName,
-        statement: habit.statement,
-        tag: habit.tag,
-        color: habit.color,
-        streak: habit.streak,
+        statement: habit.habitStatement,
+        tag: habit.habitTag,
+        color: habit.habitColor,
+        streak: habit.streakCount,
         targetDaysDefault: habit.targetDaysDefault,
         completedDays,
         targetDays,
@@ -81,12 +81,14 @@ const markDayAsCompleted = async (req: Request<{ habitId: string }, {}, { date: 
       return res.status(404).json({ error: 'Habit not found' });
     }
 
-    const dayIndex = habit.days.findIndex((day: Day) => day.date.setUTCHours(0, 0, 0, 0) === parsedDate.getTime());
+    const dayIndex = habit.habitDays.findIndex(
+      (day: HabitDay) => day.date.setUTCHours(0, 0, 0, 0) === parsedDate.getTime()
+    );
 
     if (dayIndex > -1) {
-      habit.days[dayIndex].completed = true;
+      habit.habitDays[dayIndex].completed = true;
     } else {
-      habit.days.push({ date: parsedDate, target: false, completed: true });
+      habit.habitDays.push({ date: parsedDate, target: false, completed: true });
     }
 
     await habit.save();
@@ -111,13 +113,15 @@ const unmarkDayAsCompleted = async (req: Request<{ habitId: string }, {}, { date
       return res.status(404).json({ error: 'Habit not found' });
     }
 
-    const dayIndex = habit.days.findIndex((day: Day) => day.date.setUTCHours(0, 0, 0, 0) === parsedDate.getTime());
+    const dayIndex = habit.habitDays.findIndex(
+      (day: HabitDay) => day.date.setUTCHours(0, 0, 0, 0) === parsedDate.getTime()
+    );
 
     if (dayIndex > -1) {
-      if (!habit.days[dayIndex].target) {
-        habit.days.splice(dayIndex, 1);
+      if (!habit.habitDays[dayIndex].target) {
+        habit.habitDays.splice(dayIndex, 1);
       } else {
-        habit.days[dayIndex].completed = false;
+        habit.habitDays[dayIndex].completed = false;
       }
     }
 
@@ -131,7 +135,7 @@ const unmarkDayAsCompleted = async (req: Request<{ habitId: string }, {}, { date
 };
 
 const updateTargetDays = async (
-  req: Request<{ habitId: string }, { dateToDelete: string; dateToAdd: string }>,
+  req: Request<{ habitId: string }, {}, { dateToDelete: string; dateToAdd: string }>,
   res: Response
 ) => {
   try {
@@ -150,26 +154,26 @@ const updateTargetDays = async (
       return res.status(404).json({ error: 'Habit not found' });
     }
 
-    const dayIndexToDelete = habit.days.findIndex(
-      (day: Day) => day.date.setUTCHours(0, 0, 0, 0) === parsedDateToDelete.getTime()
+    const dayIndexToDelete = habit.habitDays.findIndex(
+      (day: HabitDay) => day.date.setUTCHours(0, 0, 0, 0) === parsedDateToDelete.getTime()
     );
 
     if (dayIndexToDelete > -1) {
-      if (!habit.days[dayIndexToDelete].completed) {
-        habit.days.splice(dayIndexToDelete, 1);
+      if (!habit.habitDays[dayIndexToDelete].completed) {
+        habit.habitDays.splice(dayIndexToDelete, 1);
       } else {
-        habit.days[dayIndexToDelete].target = false;
+        habit.habitDays[dayIndexToDelete].target = false;
       }
     }
 
-    const dayIndexToAdd = habit.days.findIndex(
-      (day: Day) => day.date.setUTCHours(0, 0, 0, 0) === parsedDateToDelete.getTime()
+    const dayIndexToAdd = habit.habitDays.findIndex(
+      (day: HabitDay) => day.date.setUTCHours(0, 0, 0, 0) === parsedDateToDelete.getTime()
     );
 
     if (dayIndexToAdd > -1) {
-      habit.days[dayIndexToAdd].target = true;
+      habit.habitDays[dayIndexToAdd].target = true;
     } else {
-      habit.days.push({ date: parsedDateToAdd, target: true, completed: false });
+      habit.habitDays.push({ date: parsedDateToAdd, target: true, completed: false });
     }
 
     await habit.save();
@@ -181,13 +185,105 @@ const updateTargetDays = async (
   }
 };
 
-const createHabit = async (req: Request, res: Response) => {
-  console.log('hello from backend');
+const createHabit = async (req: Request<{}, {}, ManageHabitRequest>, res: Response) => {
+  try {
+    const { habitName, habitColor, habitStatement, targetDaysDefault, habitTag } = req.body;
+
+    if (!habitName || !habitColor || !habitStatement || !targetDaysDefault || !habitTag) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    const initialTargetDays = createInitialTargetDays(targetDaysDefault);
+
+    const newHabit = new HabitModel({
+      habitName,
+      habitColor,
+      habitStatement,
+      habitTag,
+      streakCount: 0,
+      targetDaysDefault,
+      habitDays: initialTargetDays,
+    });
+
+    await newHabit.save();
+    res.status(201).json({ message: 'Habit created successfully', habit: newHabit });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
 };
 
-const updateHabitDetails = async (req: Request, res: Response) => {};
+const sendHabitDetails = async (req: Request<{ habitId: string }, {}, {}>, res: Response) => {
+  try {
+    const { habitId } = req.params;
+    const habit = await HabitModel.findOne({ _id: habitId });
 
-const deleteHabit = async (req: Request, res: Response) => {};
+    if (!habit) {
+      res.status(404).json({ error: 'Habit not found' });
+      return;
+    }
+
+    const habitEditData: HabitEditData = {
+      id: habit._id,
+      habitName: habit.habitName,
+      habitColor: habit.habitColor,
+      habitStatement: habit.habitStatement,
+      habitTag: habit.habitTag,
+      targetDaysDefault: habit.targetDaysDefault,
+    };
+    res.json({ habit: habitEditData });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+const updateHabitDetails = async (req: Request<{ habitId: string }, {}, ManageHabitRequest>, res: Response) => {
+  try {
+    const { habitId } = req.params;
+    const habit = await HabitModel.findOne({ _id: habitId });
+
+    if (!habit) {
+      res.status(404).json({ error: 'Habit not found' });
+      return;
+    }
+
+    const { habitName, habitColor, habitStatement, targetDaysDefault, habitTag } = req.body;
+
+    if (!habitName || !habitColor || !habitStatement || !targetDaysDefault || !habitTag) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    } else {
+      habit.habitName = habitName;
+      habit.habitStatement = habitStatement;
+      habit.habitTag = habitTag;
+      habit.habitColor = habitColor;
+      habit.targetDaysDefault = targetDaysDefault;
+    }
+
+    await habit.save();
+    res.status(201).json({ message: 'Habit updated successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+const deleteHabit = async (req: Request<{ habitId: string }, {}, {}>, res: Response) => {
+  try {
+    const { habitId } = req.params;
+    const habit = await HabitModel.findOne({ _id: habitId });
+
+    if (!habit) {
+      res.status(404).json({ error: 'Habit not found' });
+      return;
+    }
+    await habit.deleteOne();
+    res.status(201).json({ message: 'Habit deleted successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
 
 export default {
   sendHabitDashboardData,
@@ -196,6 +292,7 @@ export default {
   markDayAsCompleted,
   unmarkDayAsCompleted,
   createHabit,
+  sendHabitDetails,
   updateHabitDetails,
   deleteHabit,
 };

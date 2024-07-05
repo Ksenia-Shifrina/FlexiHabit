@@ -1,21 +1,21 @@
 import React from 'react';
 import { Box, FormControl, Input, MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material';
-import { InputValuesFormat } from '../../../types/inputTypes';
-import { validFrequency } from '../../../helpers/inputHelpers';
+import { InputValuesFormat } from '../../types/inputTypes';
+import { validFrequency } from '../../helpers/inputHelpers';
 
-interface ActivityAndFrequencyInputsProps {
-  activityValue: string;
+interface StatementAndFrequencyInputsProps {
+  statementValue: string;
   frequencyValue: number;
   setInputValues: Function;
 }
 
-const ActivityAndFrequencyInputs: React.FC<ActivityAndFrequencyInputsProps> = ({
-  activityValue,
+const StatementAndFrequencyInputs: React.FC<StatementAndFrequencyInputsProps> = ({
+  statementValue,
   frequencyValue,
   setInputValues,
 }) => {
-  const handleActivityInput = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setInputValues((prevState: InputValuesFormat) => ({ ...prevState, activityValue: event.target.value }));
+  const handleStatementInput = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValues((prevState: InputValuesFormat) => ({ ...prevState, statementValue: event.target.value }));
   };
 
   const handleFrequencyInput = (event: SelectChangeEvent) => {
@@ -26,12 +26,12 @@ const ActivityAndFrequencyInputs: React.FC<ActivityAndFrequencyInputsProps> = ({
     <Box sx={{}}>
       <Input
         required
-        id="habitActivity"
-        name="habitActivity"
+        id="habitStatement"
+        name="habitStatement"
         type="text"
         placeholder="read 5 pages"
-        value={activityValue}
-        onChange={handleActivityInput}
+        value={statementValue}
+        onChange={handleStatementInput}
         inputProps={{
           style: { textAlign: 'center', fontSize: '1.5rem' },
         }}
@@ -43,8 +43,10 @@ const ActivityAndFrequencyInputs: React.FC<ActivityAndFrequencyInputsProps> = ({
           value={frequencyValue.toString()}
           onChange={handleFrequencyInput}
         >
-          {validFrequency.map((fr) => (
-            <MenuItem value={fr}>{fr}</MenuItem>
+          {validFrequency.map((fr, index) => (
+            <MenuItem key={index} value={fr}>
+              {fr}
+            </MenuItem>
           ))}
         </Select>
       </FormControl>
@@ -52,4 +54,4 @@ const ActivityAndFrequencyInputs: React.FC<ActivityAndFrequencyInputsProps> = ({
   );
 };
 
-export default ActivityAndFrequencyInputs;
+export default StatementAndFrequencyInputs;

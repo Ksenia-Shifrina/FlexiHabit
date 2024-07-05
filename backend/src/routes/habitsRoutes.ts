@@ -19,6 +19,7 @@ habitsRouter.route('/create-habit').post(asyncHandler(habits.createHabit));
 
 habitsRouter
   .route('/:habitId/edit')
+  .get(asyncHandler(habits.sendHabitDetails))
   .put(asyncHandler(habits.updateHabitDetails))
   .delete(asyncHandler(habits.deleteHabit));
 

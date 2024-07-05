@@ -6,8 +6,9 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { Box, CssBaseline, PaletteMode } from '@mui/material';
 import ColorModeContext from './contexts/ColorModeContext';
 import getDesignTokens from './ColorPalette';
-import DashboardRoute from './routes/Dashboard';
-import NewHabitFormRoute from './routes/NewHabitForm';
+import DashboardRoute from './routes/DashboardRoute';
+import CreateHabitFormRoute from './routes/CreateHabitFormRoute';
+import EditHabitFormRoute from './routes/EditHabitFormRoute';
 
 const App: React.FC = () => {
   const [mode, setMode] = useState<PaletteMode>('light');
@@ -29,12 +30,13 @@ const App: React.FC = () => {
   return (
     <ColorModeContext.Provider value={colorMode}>
       <ThemeProvider theme={theme}>
-        <CssBaseline />
+        {/* <CssBaseline /> */}
         <Box className="App">
           <Navbar />
           <Routes>
             <Route path="/flexihabit/dashboard" element={<DashboardRoute />} />
-            <Route path="/flexihabit/newhabit" element={<NewHabitFormRoute />} />
+            <Route path="/flexihabit/newhabit" element={<CreateHabitFormRoute />} />
+            <Route path="/flexihabit/edithabit/:habitId" element={<EditHabitFormRoute />} />
           </Routes>
         </Box>
       </ThemeProvider>

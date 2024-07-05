@@ -2,7 +2,7 @@ import { useState, useCallback } from 'react';
 
 interface ApiRequestParams {
   endpoint: string;
-  method: 'GET' | 'POST' | 'PATCH' | 'DELETE';
+  method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
   body?: any;
   queryParams?: Record<string, string>;
   pathParams?: Record<string, string | number>;

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Box, IconButton, Typography } from '@mui/material';
-import HabitBox from './HabitBox';
+import HabitBox from './HabitBox/HabitBox';
 import AddCircleRoundedIcon from '@mui/icons-material/AddCircleRounded';
 import Calendar from './Calendar';
 import { useNavigate } from 'react-router-dom';

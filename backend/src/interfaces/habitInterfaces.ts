@@ -3,25 +3,42 @@ import { Document, Schema } from 'mongoose';
 export interface IHabit extends Document {
   id: Schema.Types.ObjectId;
   habitName: string;
-  statement: string;
-  tag: string;
-  color: string;
+  habitColor: string;
+  habitStatement: string;
+  habitTag: string;
   targetDaysDefault: number[];
-  days: [Day];
+  habitDays: [HabitDay];
 }
 
-export interface Day {
+export interface HabitDay {
   date: Date;
-  completed: boolean;
   target: boolean;
+  completed: boolean;
 }
 
 export interface HabitBasicData {
   id: string;
-  streak: number;
+  streakCount: number;
   habitName: string;
-  statement: string;
-  tag: string;
-  color: string;
+  habitColor: string;
+  habitStatement: string;
+  habitTag: string;
+  targetDaysDefault: number[];
+}
+
+export interface HabitEditData {
+  id: string;
+  habitName: string;
+  habitColor: string;
+  habitStatement: string;
+  habitTag: string;
+  targetDaysDefault: number[];
+}
+
+export interface ManageHabitRequest {
+  habitName: string;
+  habitColor: string;
+  habitStatement: string;
+  habitTag: string;
   targetDaysDefault: number[];
 }

@@ -5,15 +5,15 @@ import {
   useMarkDayAsCompleted,
   useUnmarkDayAsCompleted,
   useUpdateTargetDays,
-} from '../../hooks/habitApiHooks';
-import { containsDate } from '../../utils/dateUtils';
-import DisabledEmptyIcon from './DailyHabitIcons/DisabledEmptyIcon';
-import FutureDefaultTargetIcon from './DailyHabitIcons/FutureDefaultTargetIcon';
-import DisabledTargetIcon from './DailyHabitIcons/DisabledTargetIcon';
-import DisabledCheckedIcon from './DailyHabitIcons/DisabledCheckedIcon';
-import ActiveCheckedIcon from './DailyHabitIcons/ActiveCheckedIcon';
-import ActiveTargetIcon from './DailyHabitIcons/ActiveTargetIcon';
-import ActiveEmptyIcon from './DailyHabitIcons/ActiveEmptyIcon';
+} from '../../../../hooks/habitApiHooks';
+import { containsDate } from '../../../../utils/dateUtils';
+import DisabledEmptyIcon from './DisabledEmptyIcon';
+import FutureDefaultTargetIcon from './FutureDefaultTargetIcon';
+import DisabledTargetIcon from './DisabledTargetIcon';
+import DisabledCheckedIcon from './DisabledCheckedIcon';
+import ActiveCheckedIcon from './ActiveCheckedIcon';
+import ActiveTargetIcon from './ActiveTargetIcon';
+import ActiveEmptyIcon from './ActiveEmptyIcon';
 import {
   isCurrentChecked,
   isCurrentTarget,
@@ -21,7 +21,7 @@ import {
   isPastChecked,
   isPastOrFutureTarget,
   isPastOrFutureUnchecked,
-} from '../../helpers/dailyHabitIconsConditions';
+} from '../../../../helpers/dailyHabitIconsConditions';
 
 export interface DailyHabitIconsProps {
   id: string;
@@ -96,16 +96,24 @@ const DailyHabitIcons: React.FC<DailyHabitIconsProps> = ({
     >
       {weekDates.map((date, index) => {
         if (isPastChecked(date, completedDays)) {
-          return <DisabledCheckedIcon index={index} date={date} handleDrop={handleDrop} />;
+          return <DisabledCheckedIcon key={index} index={index} date={date} handleDrop={handleDrop} />;
         } else if (isFutureDefaultTarget(index, weekDates, targetDaysDefault)) {
-          return <FutureDefaultTargetIcon index={index} />;
+          return <FutureDefaultTargetIcon key={index} index={index} />;
         } else if (isPastOrFutureTarget(date, targetDays)) {
-          return <DisabledTargetIcon index={index} handleDragStart={handleDragStart} handleDragEnd={handleDragEnd} />;
+          return (
+            <DisabledTargetIcon
+              key={index}
+              index={index}
+              handleDragStart={handleDragStart}
+              handleDragEnd={handleDragEnd}
+            />
+          );
         } else if (isPastOrFutureUnchecked(date)) {
-          return <DisabledEmptyIcon index={index} date={date} handleDrop={handleDrop} />;
+          return <DisabledEmptyIcon key={index} index={index} date={date} handleDrop={handleDrop} />;
         } else if (isCurrentChecked(date, completedDays)) {
           return (
             <ActiveCheckedIcon
+              key={index}
               index={index}
               date={date}
               id={id}
@@ -116,6 +124,7 @@ const DailyHabitIcons: React.FC<DailyHabitIconsProps> = ({
         } else if (isCurrentTarget(date, targetDays)) {
           return (
             <ActiveTargetIcon
+              key={index}
               index={index}
               date={date}
               id={id}
@@ -127,6 +136,7 @@ const DailyHabitIcons: React.FC<DailyHabitIconsProps> = ({
         } else {
           return (
             <ActiveEmptyIcon
+              key={index}
               index={index}
               date={date}
               id={id}

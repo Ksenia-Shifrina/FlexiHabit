@@ -3,27 +3,22 @@ import React, { useState } from 'react';
 import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded';
 import ChevronLeftRoundedIcon from '@mui/icons-material/ChevronLeftRounded';
 import { InputValuesFormat } from '../../../types/inputTypes';
-import ActivityAndFrequencyInputs from './ActivityAndFrequencyInputs';
+import StatementAndFrequencyInputs from './StatementAndFrequencyInputs';
 import { PagesNewHabitFormProps } from '../FirstPageInputForm/FirstPageInputForm';
+import TargetDaysInput from './TargetDaysInput';
 
 const SecondPageInputForm: React.FC<PagesNewHabitFormProps> = ({ displayNewPage, inputValues, setInputValues }) => {
-  const handleActivityInput = (enteredActivity: string) => {
-    setInputValues((prevState: InputValuesFormat) => ({ ...prevState, activityValue: enteredActivity }));
-  };
-
-  const handleFrequencyInput = (enteredFrequency: number) => {
-    setInputValues((prevState: InputValuesFormat) => ({ ...prevState, frequencyValue: enteredFrequency }));
-  };
-
   return (
     <Box sx={{}}>
-      <ActivityAndFrequencyInputs
-        activityValue={inputValues.activityValue}
+      <StatementAndFrequencyInputs
+        statementValue={inputValues.statementValue}
         frequencyValue={inputValues.frequencyValue}
         setInputValues={setInputValues}
       />
+      <TargetDaysInput targetDaysValue={inputValues.targetDaysValue} setInputValues={setInputValues} />
       <IconButton onClick={() => displayNewPage(-1)} sx={{ color: 'primary.contrastText', fontSize: 'large', p: '0' }}>
         <ChevronLeftRoundedIcon sx={{ fontSize: { xs: '1.2rem', sm: '1.4rem' } }} />
+        Back
       </IconButton>
       <IconButton onClick={() => displayNewPage(1)} sx={{ color: 'primary.contrastText', fontSize: 'large', p: '0' }}>
         Next

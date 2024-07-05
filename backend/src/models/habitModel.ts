@@ -4,11 +4,11 @@ import { IHabit } from '../interfaces/habitInterfaces';
 const HabitSchema = new Schema<IHabit>({
   id: Schema.Types.ObjectId,
   habitName: String,
-  statement: String,
-  tag: String,
-  color: String,
+  habitColor: String,
+  habitStatement: String,
+  habitTag: String,
   targetDaysDefault: [Number],
-  days: [
+  habitDays: [
     {
       date: Date,
       target: Boolean,

@@ -1,7 +1,7 @@
 import React from 'react';
-import { Box, Checkbox, FormControl, FormControlLabel, FormGroup, Typography } from '@mui/material';
-import { InputValuesFormat, TargetDay } from '../../../types/inputTypes';
-import { daysOfWeekLong } from '../../../utils/dateUtils';
+import { Box, Checkbox, FormControl, FormControlLabel, FormGroup } from '@mui/material';
+import { InputValuesFormat, TargetDay } from '../../types/inputTypes';
+import { daysOfWeekLong } from '../../utils/dateUtils';
 
 interface TargetDaysInputProps {
   targetDaysValue: TargetDay;
@@ -22,11 +22,8 @@ const TargetDaysInput: React.FC<TargetDaysInputProps> = ({ targetDaysValue, setI
 
   return (
     <Box sx={{}}>
-      <Typography variant="h1" sx={{ fontSize: '2rem', mb: '2rem' }}>
-        I am planning to do it on
-      </Typography>
       <FormControl sx={{ m: 3 }} component="fieldset" variant="standard">
-        <FormGroup sx={{ flexDirection: 'row' }}>
+        <FormGroup>
           {daysOfWeekLong.map((day, index) => (
             <FormControlLabel
               key={index}
@@ -39,9 +36,6 @@ const TargetDaysInput: React.FC<TargetDaysInputProps> = ({ targetDaysValue, setI
           ))}
         </FormGroup>
       </FormControl>
-      <Typography variant="h1" sx={{ fontSize: '2rem', mb: '2rem' }}>
-        But I can move it around at any time to suit my schedule.
-      </Typography>
     </Box>
   );
 };
