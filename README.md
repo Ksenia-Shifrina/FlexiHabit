@@ -18,7 +18,7 @@ FlexiHabit is a comprehensive habit tracking web application that was designed a
 
 ## Screenshots
 <details>
-  <summary>## View</summary>
+  <summary>Laptop view</summary>
 
 ### Dashboard:
 
