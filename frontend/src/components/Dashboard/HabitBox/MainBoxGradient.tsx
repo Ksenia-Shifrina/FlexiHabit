@@ -28,7 +28,7 @@ const MainBoxGradient: React.FC<MainBoxGradientProps> = ({ targetDays, completed
       ? {
           content: '""',
           position: 'absolute',
-          left: `${completionRatio}%`,
+          left: `${completionRatio - 0.5}%`,
           top: 0,
           width: '6%',
           height: '100%',
