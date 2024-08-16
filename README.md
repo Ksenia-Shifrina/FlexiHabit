@@ -18,19 +18,17 @@ FlexiHabit is a comprehensive habit tracking web application that was designed a
 
 ## Screenshots
 <details>
-  <summary>Laptop view</summary>
-
-### Dashboard:
+  <summary>Dashboard</summary>
 
 ![Project Screenshot](./assets/Dashboard.png)
 
-
-### Dashboard in dark mode:
-
 ![Project Screenshot](./assets/DashboardDarkMode.png)
 
+</details>
 
-### Creating new habit:
+
+<details>
+  <summary>Creating new habit</summary>
 
 ![Project Screenshot](./assets/CreateHabitFormPage1.png)
 
@@ -40,8 +38,11 @@ FlexiHabit is a comprehensive habit tracking web application that was designed a
 
 ![Project Screenshot](./assets/CreateHabitFormPage3.png)
 
+</details>
 
-### Editing a habit:
+
+<details>
+  <summary>Editing a habit</summary>
 
 ![Project Screenshot](./assets/EditForm.png)
 
