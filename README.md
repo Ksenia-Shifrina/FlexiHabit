@@ -17,12 +17,12 @@ Technologies Used
 - Routing: React Router
 
 
-# Dashboard:
+## Dashboard:
 
 ![Project Screenshot](./assets/Dashboard.png)
 
 
-# Dashboard in dark mode:
+### Dashboard in dark mode:
 
 ![Project Screenshot](./assets/DashboardDarkMode.png)
 
