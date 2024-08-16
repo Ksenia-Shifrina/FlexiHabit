@@ -16,13 +16,19 @@ Technologies Used
 - Backend: TypeScript, Node.js, Express.js, MongoDB
 - Routing: React Router
 
-Dashboard:
+
+# Dashboard:
+
 ![Project Screenshot](./assets/Dashboard.png)
 
-Dashboard in dark mode:
+
+# Dashboard in dark mode:
+
 ![Project Screenshot](./assets/DashboardDarkMode.png)
 
-Creating new habit:
+
+# Creating new habit:
+
 ![Project Screenshot](./assets/CreateHabitFormPage1.png)
 
 ![Project Screenshot](./assets/ChooseColor.png)
@@ -31,5 +37,7 @@ Creating new habit:
 
 ![Project Screenshot](./assets/CreateHabitFormPage3.png)
 
-Editing a habit:
+
+# Editing a habit:
+
 ![Project Screenshot](./assets/EditForm.png)
