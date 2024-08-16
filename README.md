@@ -16,9 +16,9 @@ FlexiHabit is a comprehensive habit tracking web application that was designed a
 - Backend: TypeScript, Node.js, Express.js, MongoDB
 - Routing: React Router
 
-
+## Screenshots
 <details>
-  <summary>Screenshots</summary>
+  <summary>## View</summary>
 
 ### Dashboard:
 
