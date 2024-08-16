@@ -16,4 +16,4 @@ Technologies Used
 - Backend: TypeScript, Node.js, Express.js, MongoDB
 - Routing: React Router
 
-![Project Screenshot](./frontend/public/images/screenshot.png)
+![Project Screenshot](./frontend/public/images/image.png)
