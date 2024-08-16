@@ -15,3 +15,5 @@ Technologies Used
 - Frontend: React, TypeScript, Material UI
 - Backend: TypeScript, Node.js, Express.js, MongoDB
 - Routing: React Router
+
+![Project Screenshot](./frontend/public/images/image.png)
