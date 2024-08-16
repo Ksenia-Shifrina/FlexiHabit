@@ -17,8 +17,8 @@ FlexiHabit is a comprehensive habit tracking web application that was designed a
 - Routing: React Router
 
 
-
-
+<details>
+  <summary>Screenshots</summary>
 
 ### Dashboard:
 
@@ -44,3 +44,6 @@ FlexiHabit is a comprehensive habit tracking web application that was designed a
 ### Editing a habit:
 
 ![Project Screenshot](./assets/EditForm.png)
+
+
+</details>
