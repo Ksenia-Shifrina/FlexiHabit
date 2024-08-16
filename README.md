@@ -44,7 +44,7 @@ FlexiHabit is a comprehensive habit tracking web application that was designed a
 <details>
   <summary>Editing a habit</summary>
 
-![Project Screenshot](./assets/EditForm.png)
+
 
 
 </details>
