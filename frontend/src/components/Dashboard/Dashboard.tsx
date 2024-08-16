@@ -69,6 +69,7 @@ const Dashboard: React.FC = () => {
           fontSize: 'large',
           p: '0',
           mt: { xs: 2, sm: 3 },
+          mb: { xs: 3, sm: 5 },
         }}
         onClick={() => navigate('/flexihabit/newhabit')}
       >

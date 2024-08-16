@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { Box, IconButton } from '@mui/material';
-import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded';
+import { Box } from '@mui/material';
 import { InputValuesFormat } from '../../../types/inputTypes';
 import NameInput from './NameInput';
 import ColorInput from './ColorInput';
 import ColorPicker from './ColorPicker';
+import ChangePageButton from '../../helpers/ChangePageButton';
+import PageContentWrapper from '../../helpers/PageContentWrapper';
 
 export interface PagesNewHabitFormProps {
   displayNewPage: Function;
@@ -16,18 +17,14 @@ const FirstPageInputForm: React.FC<PagesNewHabitFormProps> = ({ displayNewPage, 
   const [isColorPicker, setIsColorPicker] = useState<boolean>(false);
 
   return (
-    <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+    <Box sx={{ height: '100%' }}>
       {!isColorPicker && (
-        <Box>
+        <PageContentWrapper>
           <NameInput nameValue={inputValues.nameValue} setInputValues={setInputValues} />
           <ColorInput colorValue={inputValues.colorValue} setIsColorPicker={setIsColorPicker} />
-          <IconButton
-            onClick={() => displayNewPage(1)}
-            sx={{ color: 'primary.contrastText', fontSize: 'large', p: '0' }}
-          >
-            Next <ChevronRightRoundedIcon sx={{ fontSize: { xs: '1.2rem', sm: '1.4rem' } }} />
-          </IconButton>
-        </Box>
+
+          <ChangePageButton displayNewPage={displayNewPage} direction={1} />
+        </PageContentWrapper>
       )}
       {isColorPicker && <ColorPicker setIsColorPicker={setIsColorPicker} setInputValues={setInputValues} />}
     </Box>

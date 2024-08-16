@@ -1,6 +1,7 @@
 import React from 'react';
 import { Box, Input, Typography } from '@mui/material';
 import { InputValuesFormat } from '../../../types/inputTypes';
+import { CustomTypography } from '../../helpers/CustomTypography';
 
 interface NameInputProps {
   nameValue: string;
@@ -17,12 +18,13 @@ const NameInput: React.FC<NameInputProps> = ({ nameValue, setInputValues }) => {
       sx={{
         display: 'flex',
         flexDirection: 'column',
-        m: '4rem',
+        mt: '4rem',
       }}
     >
-      <Typography variant="h1" sx={{ fontSize: '2rem', mb: '2rem' }}>
+      <CustomTypography variant="h1" sx={{ color: 'secondary.contrastText', fontSize: '2rem', mb: '2rem' }}>
         Short name for my habit
-      </Typography>
+      </CustomTypography>
+
       <Input
         required
         id="habitName"
@@ -31,8 +33,9 @@ const NameInput: React.FC<NameInputProps> = ({ nameValue, setInputValues }) => {
         placeholder="Read"
         value={nameValue}
         onChange={handleNameInput}
+        sx={{ width: 'auto', fontSize: '2rem', color: 'secondary.contrastText' }}
         inputProps={{
-          style: { textAlign: 'center', fontSize: '1.5rem' },
+          style: { textAlign: 'center', fontFamily: 'Kalam' },
         }}
       />
     </Box>

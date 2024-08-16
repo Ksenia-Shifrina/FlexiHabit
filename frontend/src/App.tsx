@@ -30,7 +30,7 @@ const App: React.FC = () => {
   return (
     <ColorModeContext.Provider value={colorMode}>
       <ThemeProvider theme={theme}>
-        {/* <CssBaseline /> */}
+        <CssBaseline />
         <Box className="App">
           <Navbar />
           <Routes>

@@ -1,46 +1,36 @@
-import { Box, Button, FormControl, IconButton, MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material';
-import React, { useState } from 'react';
-import ChevronLeftRoundedIcon from '@mui/icons-material/ChevronLeftRounded';
-import { InputValuesFormat } from '../../../types/inputTypes';
+import { Grid } from '@mui/material';
+import React from 'react';
 import { PagesNewHabitFormProps } from '../FirstPageInputForm/FirstPageInputForm';
-import { validTags } from '../../../helpers/inputHelpers';
+import ChangePageButton from '../../helpers/ChangePageButton';
+import { CustomTypography } from '../../helpers/CustomTypography';
+import SubmitButton from '../../helpers/SubmitButton';
+import TagInput from './TagInput';
+import PageContentWrapper from '../../helpers/PageContentWrapper';
 
 const ThirdPageInputForm: React.FC<PagesNewHabitFormProps> = ({ displayNewPage, inputValues, setInputValues }) => {
-  const handleTagInput = (event: SelectChangeEvent) => {
-    setInputValues((prevState: InputValuesFormat) => ({ ...prevState, tagValue: event.target.value }));
-  };
-
   return (
-    <Box sx={{}}>
-      <Typography variant="h1" sx={{ fontSize: '2rem', mb: '2rem' }}>
-        To keep balance
-      </Typography>
-      <Typography variant="h1" sx={{ fontSize: '2rem', mb: '2rem' }}>
-        I take care of various
-      </Typography>
-      <Typography variant="h1" sx={{ fontSize: '2rem', mb: '2rem' }}>
-        areas of my life.
-      </Typography>
-      <Typography variant="h1" sx={{ fontSize: '2rem', mb: '2rem' }}>
-        This habit will help with my
-      </Typography>
-      <FormControl sx={{ minWidth: 250 }} variant="standard">
-        <Select id="habitTag" name="habitTag" value={inputValues.tagValue} onChange={handleTagInput}>
-          {validTags.map((tag, index) => (
-            <MenuItem key={index} value={tag}>
-              {tag}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-      <IconButton onClick={() => displayNewPage(-1)} sx={{ color: 'primary.contrastText', fontSize: 'large', p: '0' }}>
-        <ChevronLeftRoundedIcon sx={{ fontSize: { xs: '1.2rem', sm: '1.4rem' } }} />
-        Back
-      </IconButton>
-      <IconButton type="submit" sx={{ color: 'primary.contrastText', fontSize: 'large', p: '0' }}>
-        Save
-      </IconButton>
-    </Box>
+    <PageContentWrapper>
+      <CustomTypography
+        variant="h1"
+        sx={{ fontSize: '1.5rem', mt: '2rem', mb: '1.5rem', color: 'secondary.contrastText', lineHeight: 1.5 }}
+      >
+        <span style={{ textDecoration: 'wavy underline' }}> Balancing</span> my life <br /> helps me reach my{' '}
+        <span style={{ textDecoration: 'dotted underline' }}>goals</span>
+        <br />
+        and feel truly fulfilled.
+      </CustomTypography>
+
+      <CustomTypography variant="h1" sx={{ fontSize: '1.5rem', mb: '2rem', color: 'secondary.contrastText' }}>
+        Developing this habit will positively impact my
+      </CustomTypography>
+
+      <TagInput tagValue={inputValues.tagValue} setInputValues={setInputValues} />
+
+      <Grid container gap="0.5rem" sx={{ direction: 'row', justifyContent: 'center' }}>
+        <ChangePageButton displayNewPage={displayNewPage} direction={-1} />
+        <SubmitButton />
+      </Grid>
+    </PageContentWrapper>
   );
 };
 

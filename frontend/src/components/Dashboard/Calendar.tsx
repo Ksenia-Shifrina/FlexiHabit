@@ -92,6 +92,7 @@ const Calendar: React.FC<CalendarProps> = ({
           sx={{
             fontSize: { xs: '0.9rem', sm: '1.1rem' },
             ml: { xs: 0, sm: 0 },
+            mr: { xs: 0, sm: 2 },
           }}
         >
           {months[displayMonthIndex]}

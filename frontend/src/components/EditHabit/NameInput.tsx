@@ -18,7 +18,7 @@ const NameInput: React.FC<NameInputProps> = ({ nameValue, setInputValues }) => {
       sx={{
         display: 'flex',
         flexDirection: 'column',
-        m: '4rem',
+        my: '1rem',
       }}
     >
       <Input
@@ -30,7 +30,7 @@ const NameInput: React.FC<NameInputProps> = ({ nameValue, setInputValues }) => {
         value={nameValue}
         onChange={handleNameInput}
         inputProps={{
-          style: { textAlign: 'center', fontSize: '1.5rem' },
+          style: { textAlign: 'center', fontSize: '2rem', fontFamily: 'Kalam' },
         }}
       />
     </Box>

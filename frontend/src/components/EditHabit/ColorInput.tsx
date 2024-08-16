@@ -15,12 +15,13 @@ const ColorInput: React.FC<ColorInputProps> = ({ colorValue, setIsColorPicker })
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        m: '3rem',
+        my: '1rem',
+        ml: '2rem',
       }}
     >
       <Input id="habitColor" name="habitColor" type="text" value={colorValue} style={{ display: 'none' }} />
       <IconButton onClick={() => setIsColorPicker(true)}>
-        <CircleIcon sx={{ color: colorValue, fontSize: 35 }} />
+        <CircleIcon sx={{ color: colorValue, fontSize: 40 }} />
       </IconButton>
     </Box>
   );

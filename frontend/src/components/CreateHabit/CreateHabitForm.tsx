@@ -1,14 +1,15 @@
-import { Box, IconButton } from '@mui/material';
+import { Box } from '@mui/material';
 import React, { useState } from 'react';
 import FirstPageInputForm from './FirstPageInputForm/FirstPageInputForm';
 import SecondPageInputForm from './SecondPageInputForm/SecondPageInputForm';
 import ThirdPageInputForm from './ThirdPageInputForm/ThirdPageInputForm';
 import { useNavigate } from 'react-router-dom';
-import HighlightOffRoundedIcon from '@mui/icons-material/HighlightOffRounded';
 import { useCreateNewHabit } from '../../hooks/habitApiHooks';
 import { InputValuesFormat } from '../../types/inputTypes';
 import { startingInputValues } from '../../helpers/inputHelpers';
 import { getTrueKeys } from '../../helpers/convertTypes';
+import CloseFormButton from '../helpers/CloseFormButton';
+import PageWrapper from '../helpers/PageWrapper';
 
 const CreateHabitForm: React.FC = ({}) => {
   const navigate = useNavigate();
@@ -19,30 +20,19 @@ const CreateHabitForm: React.FC = ({}) => {
     setDisplayedPage((prevState) => prevState + i);
   };
 
-  const { createHabit: createHabit } = useCreateNewHabit();
+  const { createHabit } = useCreateNewHabit();
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const formData = new FormData(event.currentTarget);
-    const habitName = formData.get('habitName');
-    const habitColor = formData.get('habitColor');
-    const habitStatement = formData.get('habitStatement');
-    const habitTag = formData.get('habitTag');
-    const habitTargetDays = inputValues.targetDaysValue;
     let targetDaysDefault: number[] = [];
-    if (habitTargetDays) {
-      targetDaysDefault = getTrueKeys(habitTargetDays);
-    }
-    if (
-      typeof habitName === 'string' &&
-      typeof habitColor === 'string' &&
-      typeof habitStatement === 'string' &&
-      typeof habitTag === 'string'
-    ) {
-      createHabit(habitName, habitColor, habitStatement, targetDaysDefault, habitTag);
-    } else {
-      console.error('Form data type error');
-    }
+    targetDaysDefault = getTrueKeys(inputValues.targetDaysValue);
+    createHabit(
+      inputValues.nameValue,
+      inputValues.colorValue,
+      inputValues.statementValue,
+      targetDaysDefault,
+      inputValues.tagValue
+    );
     navigate('/flexihabit/dashboard');
   };
 
@@ -63,67 +53,40 @@ const CreateHabitForm: React.FC = ({}) => {
           flexDirection: 'column',
           bgcolor: 'primary.main',
           alignItems: 'center',
-          justifyContent: 'center',
+          justifyContent: 'space-around',
           borderRadius: '10px',
           boxShadow: 1,
-          width: { xs: '90%', sm: '80%' },
-          height: { xs: 'auto', sm: 'auto' },
+          width: { xs: '90%', sm: '40%' },
           maxWidth: '2000px',
-          // maxHeight: { xs: '95px', sm: '120px' },
+          height: { xs: '300px', sm: '500px' },
           mt: { xs: '2rem', sm: '4rem' },
         }}
       >
-        <Box
-          sx={{
-            display: 'flex',
-            width: '100%',
-            flexDirection: 'row',
-            justifyContent: 'flex-end',
-          }}
-        >
-          <IconButton
-            onClick={() => navigate('/flexihabit/dashboard')}
-            sx={{ color: 'primary.contrastText', fontSize: 'large', p: '0', mr: 7 }}
-          >
-            <HighlightOffRoundedIcon sx={{ fontSize: { xs: '1.2rem', sm: '1.4rem' } }} />
-          </IconButton>
-        </Box>
-        <div
-          style={{
-            visibility: displayedPage === 1 ? 'visible' : 'hidden',
-            position: displayedPage === 1 ? 'static' : 'absolute',
-          }}
-        >
+        <CloseFormButton />
+
+        <PageWrapper displayedPage={displayedPage} num={1}>
           <FirstPageInputForm
             displayNewPage={displayNewPage}
             inputValues={inputValues}
             setInputValues={setInputValues}
           />
-        </div>
-        <div
-          style={{
-            visibility: displayedPage === 2 ? 'visible' : 'hidden',
-            position: displayedPage === 2 ? 'static' : 'absolute',
-          }}
-        >
+        </PageWrapper>
+
+        <PageWrapper displayedPage={displayedPage} num={2}>
           <SecondPageInputForm
             displayNewPage={displayNewPage}
             inputValues={inputValues}
             setInputValues={setInputValues}
           />
-        </div>
-        <div
-          style={{
-            visibility: displayedPage === 3 ? 'visible' : 'hidden',
-            position: displayedPage === 3 ? 'static' : 'absolute',
-          }}
-        >
+        </PageWrapper>
+
+        <PageWrapper displayedPage={displayedPage} num={3}>
           <ThirdPageInputForm
             displayNewPage={displayNewPage}
             inputValues={inputValues}
             setInputValues={setInputValues}
           />
-        </div>
+        </PageWrapper>
       </Box>
     </Box>
   );

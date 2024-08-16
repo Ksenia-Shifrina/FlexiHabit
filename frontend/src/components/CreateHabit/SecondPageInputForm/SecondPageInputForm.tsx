@@ -1,30 +1,39 @@
-import { Box, IconButton, Input, SelectChangeEvent, Typography } from '@mui/material';
+import { Box, Grid } from '@mui/material';
 import React, { useState } from 'react';
-import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded';
-import ChevronLeftRoundedIcon from '@mui/icons-material/ChevronLeftRounded';
-import { InputValuesFormat } from '../../../types/inputTypes';
-import StatementAndFrequencyInputs from './StatementAndFrequencyInputs';
 import { PagesNewHabitFormProps } from '../FirstPageInputForm/FirstPageInputForm';
 import TargetDaysInput from './TargetDaysInput';
+import StatementInput from './StatementInput';
+import FrequencyInput from './FrequencyInput';
+import ChangePageButton from '../../helpers/ChangePageButton';
+import PageContentWrapper from '../../helpers/PageContentWrapper';
 
 const SecondPageInputForm: React.FC<PagesNewHabitFormProps> = ({ displayNewPage, inputValues, setInputValues }) => {
+  const [isShortStatement, setIsShortStatement] = useState<boolean>(true);
+
   return (
-    <Box sx={{}}>
-      <StatementAndFrequencyInputs
+    <PageContentWrapper>
+      <StatementInput
         statementValue={inputValues.statementValue}
+        setInputValues={setInputValues}
+        isShortStatement={isShortStatement}
+        setIsShortStatement={setIsShortStatement}
+      />
+      <FrequencyInput
         frequencyValue={inputValues.frequencyValue}
         setInputValues={setInputValues}
+        isShortStatement={isShortStatement}
       />
-      <TargetDaysInput targetDaysValue={inputValues.targetDaysValue} setInputValues={setInputValues} />
-      <IconButton onClick={() => displayNewPage(-1)} sx={{ color: 'primary.contrastText', fontSize: 'large', p: '0' }}>
-        <ChevronLeftRoundedIcon sx={{ fontSize: { xs: '1.2rem', sm: '1.4rem' } }} />
-        Back
-      </IconButton>
-      <IconButton onClick={() => displayNewPage(1)} sx={{ color: 'primary.contrastText', fontSize: 'large', p: '0' }}>
-        Next
-        <ChevronRightRoundedIcon sx={{ fontSize: { xs: '1.2rem', sm: '1.4rem' } }} />
-      </IconButton>
-    </Box>
+      <TargetDaysInput
+        targetDaysValue={inputValues.targetDaysValue}
+        setInputValues={setInputValues}
+        isShortStatement={isShortStatement}
+      />
+
+      <Grid container gap="0.5rem" sx={{ direction: 'row', justifyContent: 'center' }}>
+        <ChangePageButton displayNewPage={displayNewPage} direction={-1} />
+        <ChangePageButton displayNewPage={displayNewPage} direction={1} />
+      </Grid>
+    </PageContentWrapper>
   );
 };
 
