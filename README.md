@@ -1,6 +1,6 @@
 # FlexiHabit (habit-tracker)
 
-FlexiHabit is designed to help users develop and maintain good habits by providing a clear and customizable interface to track daily progress. Users can set goals, monitor their progress, and adjust their targets to fit their schedules.
+FlexiHabit is designed to help users develop and maintain good habits by providing a clear and customizable interface to track daily progress. Users can set goals for how many times a week they want to do a certain activity, mark target days when they want to do them, monitor their progress, and adjust their targets to fit their schedules.
 
 FlexiHabit is a comprehensive habit tracking web application that was designed and implemented from scratch using React, TypeScript, Material UI, and MongoDB. The project features a clear separation between frontend and backend, utilizing React Router for a seamless multipage experience. 
 
