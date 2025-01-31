@@ -16,6 +16,22 @@ FlexiHabit is a comprehensive habit tracking web application that was designed a
 - Backend: TypeScript, Node.js, Express.js, MongoDB
 - Routing: React Router
 
+## Learning Highlights
+
+- **Frontend-Backend Separation**: Focused on practising the separation of frontend and backend.
+- **RESTful API Development**: Gained experience in designing and building **RESTful APIs** to enable smooth communication between the frontend and backend. This included creating endpoints to manage user data and habit progress.
+- **Data Structure and Optimisation**: Worked on structuring data to meet project requirements and iterated on designs to optimise data retrieval and updates.
+- **MongoDB Integration**: Utilised **MongoDB** to store and manage user data, learning to implement **query filters** and optimise database interactions for performance and reliability.
+- **Frontend-Backend Interaction**: Gained experience using **React hooks** to interact with the backend, enabling dynamic data retrieval and updates from the frontend.
+- **Full-Stack Development**: Developed a deeper understanding of **full-stack** development by ensuring a seamless connection between the client-side and server-side of the application. This project enhanced my skills in both frontend and backend technologies.
+
+
+## Future Improvements
+- Implement authentication and authorisation to securely track user progress.
+- Update database schemas to store client data.
+- Develop data visualisation features to represent habit statistics.
+- Enhance the UI for better responsiveness on smaller screens.
+
 ## Screenshots
 <details>
   <summary>Dashboard</summary>
