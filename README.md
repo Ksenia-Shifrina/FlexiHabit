@@ -66,5 +66,5 @@ FlexiHabit is a comprehensive habit tracking web application that was designed a
 
 ## Demo Video
 
-Click below to watch the demo video:
-![Demo Video](./assets/Demo_Video.mp4)
+Check out the demo video for the project:
+[Watch the Demo](https://youtu.be/31zinGaInvs)
